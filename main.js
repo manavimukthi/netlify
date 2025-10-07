@@ -671,4 +671,54 @@ document.addEventListener('DOMContentLoaded', function() {
         const wasOpen = localStorage.getItem('chatOpen') === '1';
         if (wasOpen) setOpen(true);
     } catch(e) {}
+
+    // Contact form submission to n8n webhook
+    const contactForm = document.getElementById('contactForm');
+    if (contactForm) {
+        contactForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const nameInput = document.getElementById('name');
+            const emailInput = document.getElementById('email');
+            const messageInput = document.getElementById('message');
+
+            const name = nameInput ? nameInput.value.trim() : '';
+            const email = emailInput ? emailInput.value.trim() : '';
+            const message = messageInput ? messageInput.value.trim() : '';
+
+            if (!name || !email || !message) {
+                alert('Please fill in all fields.');
+                return;
+            }
+
+            const submitBtn = contactForm.querySelector('button[type="submit"]');
+            const originalBtnText = submitBtn ? submitBtn.textContent : '';
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Sending...';
+            }
+
+            try {
+                const response = await fetch('https://adminuserz32.app.n8n.cloud/webhook/contact', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, message, source: 'website' })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to send. Please try again.');
+                }
+
+                alert('Message sent!');
+                contactForm.reset();
+            } catch (err) {
+                alert(err.message || 'Something went wrong.');
+            } finally {
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = originalBtnText;
+                }
+            }
+        });
+    }
 });
