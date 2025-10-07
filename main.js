@@ -1,39 +1,47 @@
 // Smooth scrolling for navigation links
 document.addEventListener('DOMContentLoaded', function() {
-    // Page Loader: fade out quickly after DOM is ready with hard max cap
+    // Page Loader: ensure at least one full animation cycle is shown, with a hard cap
     const loader = document.getElementById('pageLoader');
     if (loader) {
+        const MIN_SHOW_MS = 2000; // show at least one full animation cycle (~2s)
+        const HARD_CAP_MS = 2500; // never exceed this after DOM is ready
+        const domStart = performance.now();
+        let finished = false;
+        let scheduled = false;
+
         const fadeOut = () => {
-            if (!loader) return;
+            if (finished) return;
+            finished = true;
             loader.style.transition = 'opacity .35s ease';
             loader.style.opacity = '0';
             setTimeout(() => loader && loader.remove(), 350);
         };
 
-        // Hard max: never keep loader longer than 1200ms after DOM is ready
-        const hardMaxTimeout = setTimeout(fadeOut, 1200);
-
-        // Prefer fading as soon as the inline logo object is ready
-        const svgObject = loader.querySelector('object.loader-logo');
-        const tryFastFinish = () => {
-            // Small delay to allow first paint; then fade
-            setTimeout(fadeOut, 150);
-            clearTimeout(hardMaxTimeout);
+        const scheduleRespectingMinimum = () => {
+            if (scheduled) return;
+            scheduled = true;
+            const elapsed = performance.now() - domStart;
+            const remaining = Math.max(0, MIN_SHOW_MS - elapsed);
+            setTimeout(fadeOut, remaining);
         };
 
+        // Hard cap as a backstop
+        const hardCapTimer = setTimeout(fadeOut, HARD_CAP_MS);
+
+        // Prefer to schedule once the inline SVG logo has loaded so the animation is visible
+        const svgObject = loader.querySelector('object.loader-logo');
         if (svgObject) {
-            // If it loads, finish quickly; if not, hard max will trigger
-            svgObject.addEventListener('load', tryFastFinish, { once: true });
-            // If already loaded from cache
-            if (svgObject.contentDocument) tryFastFinish();
+            svgObject.addEventListener('load', scheduleRespectingMinimum, { once: true });
+            // If cached and already available
+            if (svgObject.contentDocument) scheduleRespectingMinimum();
         } else {
-            // No logo object; finish fast
-            tryFastFinish();
+            // No logo object; still respect the minimum time
+            scheduleRespectingMinimum();
         }
 
-        // As an extra safety, also close on visibilitychange when page becomes visible
+        // Also schedule when the page becomes visible (in case of prerender/background)
         document.addEventListener('visibilitychange', () => {
-            if (document.visibilityState === 'visible') tryFastFinish();
+            if (document.visibilityState === 'visible') scheduleRespectingMinimum();
         }, { once: true });
     }
     // Get all navigation links
