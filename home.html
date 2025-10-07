@@ -31,7 +31,7 @@
         </div>
         <div class="nav-links">
           <a href="#about" class="nav-link">ABOUT</a>
-          <a href="tools.html" class="nav-link">TOOLS</a>
+          <a href="tools.html" class="nav-link">TOOLjS</a>
           <a href="#pricing" class="nav-link">PRICING</a>
           <a href="#contact" class="nav-link">CONTACT</a>
           <button class="contact-btn">SIGN UP</button>
@@ -375,9 +375,54 @@
         </form>
       </div>
     </div>
-    
 
-</script>
     <script src="main.js"></script>
+
+    <!-- Floating Chat Widget -->
+    <div
+      id="chatWidget"
+      class="chat-widget"
+      aria-live="polite"
+      aria-label="Chat widget"
+    >
+      <button
+        id="chatToggle"
+        class="chat-toggle"
+        aria-expanded="false"
+        aria-controls="chatWindow"
+        title="Chat with us"
+      >
+        💬
+      </button>
+      <div
+        id="chatWindow"
+        class="chat-window"
+        role="dialog"
+        aria-modal="false"
+        aria-labelledby="chatTitle"
+      >
+        <div class="chat-header">
+          <div class="chat-title" id="chatTitle">Chat</div>
+          <button class="chat-close" id="chatClose" aria-label="Close chat">
+            ×
+          </button>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+          <div class="chat-message bot">Hi! How can we help you today?</div>
+        </div>
+        <form class="chat-input" id="chatForm">
+          <input
+            type="text"
+            id="chatText"
+            placeholder="Type a message..."
+            aria-label="Type a message"
+            autocomplete="off"
+          />
+          <button type="submit" class="chat-send" aria-label="Send">
+            Send
+          </button>
+        </form>
+      </div>
+    </div>
   </body>
 </html>
