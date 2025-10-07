@@ -1,0 +1,616 @@
+// Smooth scrolling for navigation links
+document.addEventListener('DOMContentLoaded', function() {
+    // Page Loader with letter and word reveal
+    const loader = document.getElementById('pageLoader');
+    if (loader) {
+        const titleEl = loader.querySelector('.loader-title');
+        const subEl = loader.querySelector('.loader-sub');
+
+        const originalTitle = titleEl ? titleEl.textContent.trim() : '';
+        const originalSub = subEl ? subEl.textContent.trim() : '';
+
+        const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+
+        const typeLetters = async (el, text, delay = 120) => {
+            if (!el) return;
+            el.textContent = '';
+            for (let i = 0; i < text.length; i++) {
+                el.textContent += text[i];
+                await sleep(delay);
+            }
+        };
+
+        const typeWords = async (el, sentence, delay = 160) => {
+            if (!el) return;
+            el.textContent = '';
+            const words = sentence.split(/\s+/);
+            for (let i = 0; i < words.length; i++) {
+                el.textContent += (i === 0 ? '' : ' ') + words[i];
+                await sleep(delay);
+            }
+        };
+
+        (async () => {
+            await typeLetters(titleEl, originalTitle, 110);
+            await sleep(120);
+            await typeWords(subEl, originalSub, 140);
+            await sleep(250);
+            loader.style.opacity = '0';
+            loader.style.transition = 'opacity .45s ease';
+            setTimeout(() => loader.remove(), 450);
+        })();
+    }
+    // Get all navigation links
+    const navLinks = document.querySelectorAll('.nav-link');
+    
+    // Add smooth scrolling to all nav links
+    navLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            const targetId = this.getAttribute('href');
+            console.log('Navigation clicked:', targetId);
+            
+            // Only prevent default for anchor links (starting with #)
+            if (targetId.startsWith('#')) {
+                e.preventDefault();
+                console.log('Preventing default for anchor link');
+                
+                const targetSection = document.querySelector(targetId);
+                console.log('Target section found:', targetSection);
+                
+                if (targetSection) {
+                    const headerHeight = document.querySelector('.header').offsetHeight;
+                    const targetPosition = targetSection.offsetTop - headerHeight;
+                    console.log('Scrolling to position:', targetPosition);
+                    
+                    window.scrollTo({
+                        top: targetPosition,
+                        behavior: 'smooth'
+                    });
+                } else {
+                    console.log('Target section not found for:', targetId);
+                }
+            } else {
+                console.log('Page link, allowing default behavior');
+            }
+        });
+    });
+    
+    // Add scroll effect to header
+    const header = document.querySelector('.header');
+    
+    window.addEventListener('scroll', function() {
+        if (window.scrollY > 100) {
+            header.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
+            header.style.backdropFilter = 'blur(10px)';
+            header.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
+        } else {
+            header.style.backgroundColor = '#fff';
+            header.style.backdropFilter = 'none';
+            header.style.boxShadow = 'none';
+        }
+    });
+    
+    // Add hover effects to buttons
+    const buttons = document.querySelectorAll('button');
+    
+    buttons.forEach(button => {
+        button.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-2px)';
+            this.style.transition = 'all 0.3s ease';
+        });
+        
+        button.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+        });
+    });
+    
+    // Add fade-in animation on scroll
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+    
+    const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, observerOptions);
+    
+    // Observe sections for fade-in effect
+    const sections = document.querySelectorAll('section');
+    sections.forEach(section => {
+        section.style.opacity = '0';
+        section.style.transform = 'translateY(30px)';
+        section.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        observer.observe(section);
+    });
+    
+    // Make the hero section visible immediately
+    const hero = document.querySelector('.hero');
+    if (hero) {
+        hero.style.opacity = '1';
+        hero.style.transform = 'translateY(0)';
+    }
+    
+    // Add pricing card interactions
+    const enhancePricingCards = () => {
+        const pricingCards = document.querySelectorAll('.pricing-card');
+        
+        pricingCards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                if (!this.classList.contains('featured')) {
+                    this.style.transform = 'translateY(-8px) scale(1.02)';
+                    this.style.boxShadow = '0 15px 35px rgba(0,0,0,0.12)';
+                }
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                if (this.classList.contains('featured')) {
+                    this.style.transform = 'scale(1.05)';
+                    this.style.boxShadow = '0 12px 30px rgba(51, 51, 51, 0.15)';
+                } else {
+                    this.style.transform = 'translateY(0) scale(1)';
+                    this.style.boxShadow = '0 8px 20px rgba(0, 0, 0, 0.08)';
+                }
+            });
+        });
+    };
+
+    // Add pricing button interactions
+    const enhancePricingButtons = () => {
+        const planButtons = document.querySelectorAll('.plan-btn');
+        
+        planButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Add ripple effect
+                const ripple = document.createElement('span');
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+                
+                ripple.style.cssText = `
+                    position: absolute;
+                    width: ${size}px;
+                    height: ${size}px;
+                    left: ${x}px;
+                    top: ${y}px;
+                    background: rgba(255, 255, 255, 0.3);
+                    border-radius: 50%;
+                    transform: scale(0);
+                    animation: ripple 0.6s linear;
+                    pointer-events: none;
+                    z-index: 1;
+                `;
+                
+                this.style.position = 'relative';
+                this.style.overflow = 'hidden';
+                this.appendChild(ripple);
+                
+                setTimeout(() => ripple.remove(), 600);
+                
+                // Show plan selection feedback
+                const planName = this.closest('.pricing-card').querySelector('.plan-name').textContent;
+                showPlanSelection(planName);
+            });
+        });
+    };
+
+    // Show plan selection feedback
+    const showPlanSelection = (planName) => {
+        const feedback = document.createElement('div');
+        feedback.style.cssText = `
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #333;
+            color: white;
+            padding: 20px 40px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            z-index: 10000;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            animation: planFeedback 3s ease forwards;
+        `;
+        feedback.textContent = `Selected: ${planName}`;
+        
+        document.body.appendChild(feedback);
+        
+        // Add animation CSS
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes planFeedback {
+                0% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+                20% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+                80% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+                100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        setTimeout(() => {
+            feedback.remove();
+        }, 3000);
+    };
+
+    // Initialize pricing interactions
+    enhancePricingCards();
+    enhancePricingButtons();
+
+    // Add click handlers for CTA buttons
+    const ctaButtons = document.querySelectorAll('.hero-btn, .cta-btn');
+    ctaButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Scroll to pricing section
+            const pricingSection = document.querySelector('#pricing');
+            if (pricingSection) {
+                const headerHeight = document.querySelector('.header').offsetHeight;
+                const targetPosition = pricingSection.offsetTop - headerHeight;
+                
+                window.scrollTo({
+                    top: targetPosition,
+                    behavior: 'smooth'
+                });
+            } else {
+                // If no pricing section, scroll to about section
+                const aboutSection = document.querySelector('#about');
+                if (aboutSection) {
+                    const headerHeight = document.querySelector('.header').offsetHeight;
+                    const targetPosition = aboutSection.offsetTop - headerHeight;
+                    
+                    window.scrollTo({
+                        top: targetPosition,
+                        behavior: 'smooth'
+                    });
+                }
+            }
+        });
+    });
+    
+    // Add mobile menu toggle (for smaller screens)
+    const createMobileMenu = () => {
+        const nav = document.querySelector('.nav');
+        const navLinks = document.querySelector('.nav-links');
+        
+        // Create mobile menu button
+        const mobileMenuBtn = document.createElement('button');
+        mobileMenuBtn.className = 'mobile-menu-btn';
+        mobileMenuBtn.innerHTML = '☰';
+        mobileMenuBtn.style.cssText = `
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #333;
+        `;
+        
+        // Insert mobile menu button
+        nav.insertBefore(mobileMenuBtn, navLinks);
+        
+        // Toggle mobile menu
+        mobileMenuBtn.addEventListener('click', () => {
+            navLinks.classList.toggle('mobile-open');
+        });
+        
+        // Media query for mobile menu
+        const mediaQuery = window.matchMedia('(max-width: 768px)');
+        
+        const handleMobileMenu = (e) => {
+            if (e.matches) {
+                mobileMenuBtn.style.display = 'block';
+                navLinks.style.cssText = `
+                    position: absolute;
+                    top: 100%;
+                    left: 0;
+                    right: 0;
+                    background: #fff;
+                    flex-direction: column;
+                    padding: 20px;
+                    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                    transform: translateY(-100%);
+                    opacity: 0;
+                    visibility: hidden;
+                    transition: all 0.3s ease;
+                `;
+            } else {
+                mobileMenuBtn.style.display = 'none';
+                navLinks.style.cssText = '';
+                navLinks.classList.remove('mobile-open');
+            }
+        };
+        
+        mediaQuery.addListener(handleMobileMenu);
+        handleMobileMenu(mediaQuery);
+        
+        // Add mobile menu open class styles
+        const style = document.createElement('style');
+        style.textContent = `
+            .nav-links.mobile-open {
+                transform: translateY(0) !important;
+                opacity: 1 !important;
+                visibility: visible !important;
+            }
+        `;
+        document.head.appendChild(style);
+    };
+    
+    createMobileMenu();
+    
+    // Category dropdown functionality for tools page
+    const initializeCategoryFilter = () => {
+        const categorySelect = document.getElementById('categorySelect');
+        const productCards = document.querySelectorAll('.product-card');
+        
+        if (categorySelect && productCards.length > 0) {
+            categorySelect.addEventListener('change', function() {
+                const selectedCategory = this.value;
+                
+                productCards.forEach(card => {
+                    const cardCategory = card.getAttribute('data-category');
+                    
+                    // Add fade-out effect
+                    card.classList.add('fade-out');
+                    
+                    setTimeout(() => {
+                        if (selectedCategory === 'all' || cardCategory === selectedCategory) {
+                            card.classList.remove('hidden', 'fade-out');
+                            card.classList.add('fade-in');
+                        } else {
+                            card.classList.add('hidden');
+                            card.classList.remove('fade-in');
+                        }
+                    }, 150);
+                });
+                
+                // Show selection feedback
+                const selectedText = this.options[this.selectedIndex].text;
+                showCategorySelection(selectedText);
+            });
+        }
+    };
+    
+    // Show category selection feedback
+    const showCategorySelection = (categoryName) => {
+        const feedback = document.createElement('div');
+        feedback.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #333;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            z-index: 10000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            animation: categoryFeedback 2s ease forwards;
+        `;
+        feedback.textContent = `Showing: ${categoryName}`;
+        
+        document.body.appendChild(feedback);
+        
+        // Add animation CSS if not already added
+        if (!document.getElementById('categoryFeedbackStyle')) {
+            const style = document.createElement('style');
+            style.id = 'categoryFeedbackStyle';
+            style.textContent = `
+                @keyframes categoryFeedback {
+                    0% { opacity: 0; transform: translateX(100%); }
+                    20% { opacity: 1; transform: translateX(0); }
+                    80% { opacity: 1; transform: translateX(0); }
+                    100% { opacity: 0; transform: translateX(100%); }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+        
+        setTimeout(() => {
+            feedback.remove();
+        }, 2000);
+    };
+    
+    // Initialize category filter
+    initializeCategoryFilter();
+    
+    // Authentication Modal Functionality
+    const initializeAuthModal = () => {
+        const authModal = document.getElementById('authModal');
+        const signUpBtn = document.querySelector('.contact-btn');
+        const closeBtn = document.querySelector('.auth-close');
+        const authTabs = document.querySelectorAll('.auth-tab');
+        const authForms = document.querySelectorAll('.auth-form');
+        const authModalTitle = document.getElementById('authModalTitle');
+        const signupForm = document.getElementById('signupForm');
+        const loginForm = document.getElementById('loginForm');
+        
+        // Open modal when sign up button is clicked
+        if (signUpBtn) {
+            signUpBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                authModal.style.display = 'block';
+                document.body.style.overflow = 'hidden'; // Prevent background scrolling
+            });
+        }
+        
+        // Close modal when X is clicked
+        if (closeBtn) {
+            closeBtn.addEventListener('click', function() {
+                authModal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            });
+        }
+        
+        // Close modal when clicking outside
+        window.addEventListener('click', function(e) {
+            if (e.target === authModal) {
+                authModal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        });
+        
+        // Tab switching functionality
+        authTabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                const targetTab = this.getAttribute('data-tab');
+                
+                // Remove active class from all tabs and forms
+                authTabs.forEach(t => t.classList.remove('active'));
+                authForms.forEach(f => f.classList.remove('active'));
+                
+                // Add active class to clicked tab
+                this.classList.add('active');
+                
+                // Show corresponding form
+                if (targetTab === 'signup') {
+                    document.getElementById('signupForm').classList.add('active');
+                    authModalTitle.textContent = 'Sign Up';
+                } else if (targetTab === 'login') {
+                    document.getElementById('loginForm').classList.add('active');
+                    authModalTitle.textContent = 'Login';
+                }
+            });
+        });
+        
+        // Form submission handling
+        if (signupForm) {
+            signupForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const name = document.getElementById('signupName').value;
+                const email = document.getElementById('signupEmail').value;
+                const password = document.getElementById('signupPassword').value;
+                const confirmPassword = document.getElementById('signupConfirmPassword').value;
+                
+                // Basic validation
+                if (password !== confirmPassword) {
+                    showAuthMessage('Passwords do not match!', 'error');
+                    return;
+                }
+                
+                if (password.length < 6) {
+                    showAuthMessage('Password must be at least 6 characters long!', 'error');
+                    return;
+                }
+                
+                // Simulate successful signup
+                showAuthMessage('Account created successfully! Welcome!', 'success');
+                setTimeout(() => {
+                    authModal.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                    signupForm.reset();
+                }, 2000);
+            });
+        }
+        
+        if (loginForm) {
+            loginForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const email = document.getElementById('loginEmail').value;
+                const password = document.getElementById('loginPassword').value;
+                const rememberMe = document.getElementById('rememberMe').checked;
+                
+                // Simulate successful login
+                showAuthMessage('Login successful! Welcome back!', 'success');
+                setTimeout(() => {
+                    authModal.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                    loginForm.reset();
+                }, 2000);
+            });
+        }
+    };
+    
+    // Show authentication messages
+    const showAuthMessage = (message, type) => {
+        const messageDiv = document.createElement('div');
+        messageDiv.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: ${type === 'success' ? '#4CAF50' : '#f44336'};
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            z-index: 10001;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            animation: slideInRight 0.3s ease;
+        `;
+        messageDiv.textContent = message;
+        
+        document.body.appendChild(messageDiv);
+        
+        // Add animation CSS if not already added
+        if (!document.getElementById('authMessageStyle')) {
+            const style = document.createElement('style');
+            style.id = 'authMessageStyle';
+            style.textContent = `
+                @keyframes slideInRight {
+                    from { opacity: 0; transform: translateX(100%); }
+                    to { opacity: 1; transform: translateX(0); }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+        
+        setTimeout(() => {
+            messageDiv.remove();
+        }, 3000);
+    };
+    
+    // Initialize authentication modal
+    initializeAuthModal();
+
+    // Dashboard interactions
+    const initDashboard = () => {
+        const menuButtons = document.querySelectorAll('.menu-item');
+        const sections = document.querySelectorAll('.dash-section');
+        const badge = document.getElementById('notifyBadge');
+
+        if (menuButtons.length === 0 || sections.length === 0) return;
+
+        menuButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Active state for menu
+                menuButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                // Section switch
+                const id = btn.getAttribute('data-section');
+                sections.forEach(sec => sec.classList.remove('active'));
+                const target = document.getElementById(id);
+                if (target) target.classList.add('active');
+
+                // Simple badge clear when viewing messages
+                if (id === 'messages' && badge) {
+                    badge.textContent = '0';
+                }
+            });
+        });
+    };
+
+    initDashboard();
+
+    // Add Tool button feedback
+    const addToolBtn = document.getElementById('addTool');
+    if (addToolBtn) {
+        addToolBtn.addEventListener('click', () => {
+            const toast = document.createElement('div');
+            toast.textContent = 'Add Tool clicked';
+            toast.style.cssText = 'position:fixed;bottom:20px;right:20px;background:#333;color:#fff;padding:10px 14px;border-radius:8px;z-index:10000;';
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 1500);
+        });
+    }
+});
