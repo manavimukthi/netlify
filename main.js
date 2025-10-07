@@ -1,44 +1,38 @@
 // Smooth scrolling for navigation links
 document.addEventListener('DOMContentLoaded', function() {
-    // Page Loader with letter and word reveal
+    // Page Loader: show animated SVG and fade out when ready
     const loader = document.getElementById('pageLoader');
     if (loader) {
-        const titleEl = loader.querySelector('.loader-title');
-        const subEl = loader.querySelector('.loader-sub');
-
-        const originalTitle = titleEl ? titleEl.textContent.trim() : '';
-        const originalSub = subEl ? subEl.textContent.trim() : '';
-
-        const sleep = (ms) => new Promise(r => setTimeout(r, ms));
-
-        const typeLetters = async (el, text, delay = 120) => {
-            if (!el) return;
-            el.textContent = '';
-            for (let i = 0; i < text.length; i++) {
-                el.textContent += text[i];
-                await sleep(delay);
-            }
-        };
-
-        const typeWords = async (el, sentence, delay = 160) => {
-            if (!el) return;
-            el.textContent = '';
-            const words = sentence.split(/\s+/);
-            for (let i = 0; i < words.length; i++) {
-                el.textContent += (i === 0 ? '' : ' ') + words[i];
-                await sleep(delay);
-            }
-        };
-
-        (async () => {
-            await typeLetters(titleEl, originalTitle, 110);
-            await sleep(120);
-            await typeWords(subEl, originalSub, 140);
-            await sleep(250);
-            loader.style.opacity = '0';
+        const fadeOut = () => {
             loader.style.transition = 'opacity .45s ease';
+            loader.style.opacity = '0';
             setTimeout(() => loader.remove(), 450);
-        })();
+        };
+
+        const waitOneCycleThenFade = () => {
+            // Wait ~2.1s (slightly longer than SVG animate dur=2s), then fade
+            setTimeout(fadeOut, 2100);
+        };
+
+        const svgObject = loader.querySelector('object.loader-logo');
+        if (svgObject) {
+            // Ensure we start counting after the SVG is loaded
+            svgObject.addEventListener('load', () => {
+                // Also ensure page is ready
+                if (document.readyState === 'complete') {
+                    waitOneCycleThenFade();
+                } else {
+                    window.addEventListener('load', waitOneCycleThenFade, { once: true });
+                }
+            }, { once: true });
+        } else {
+            // Fallback: just fade after page load
+            if (document.readyState === 'complete') {
+                waitOneCycleThenFade();
+            } else {
+                window.addEventListener('load', waitOneCycleThenFade, { once: true });
+            }
+        }
     }
     // Get all navigation links
     const navLinks = document.querySelectorAll('.nav-link');

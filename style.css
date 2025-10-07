@@ -20,11 +20,7 @@ body {
   display: flex; align-items: center; justify-content: center;
 }
 .loader-inner { text-align: center; animation: loaderFadeIn .4s ease; }
-.loader-logo { width: 56px; height: 56px; margin: 0 auto 10px; display: block; filter: drop-shadow(0 6px 18px rgba(0,0,0,0.12)); }
-.loader-title { font-size: 24px; font-weight: 800; letter-spacing: 3px; margin-bottom: 6px; }
-.loader-sub { font-size: 14px; color: #666; margin-bottom: 16px; text-transform: lowercase; }
-.loader-progress { width: 220px; height: 6px; background: #eee; border-radius: 999px; margin: 0 auto; overflow: hidden; }
-.loader-progress .bar { display: block; height: 100%; width: 40%; background: linear-gradient(90deg, #333, #777); border-radius: 999px; animation: loaderBar 1.2s ease-in-out infinite; }
+.loader-logo { width: 140px; height: 140px; margin: 0 auto; display: block; filter: drop-shadow(0 10px 28px rgba(0,0,0,0.18)); }
 
 @keyframes loaderBar {
   0% { transform: translateX(-100%); }
@@ -145,7 +141,7 @@ body {
     right: 0;
     background-color: #fff;
     z-index: 1000;
-    padding: 20px 0;
+    padding: 8px 0; /* tighter padding to keep overall header height stable */
     border-bottom: 1px solid #eee;
 }
 
@@ -158,13 +154,11 @@ body {
     align-items: center;
 }
 
-.brand-link {
-    font-size: 24px;
-    font-weight: bold;
-    color: #333;
-    text-decoration: underline;
-    text-decoration-color: #333;
-}
+.brand-link { text-decoration: none; }
+.brand-logo { height: 150px; vertical-align: middle; display: inline-block; }
+
+/* Cap logo size inside the fixed header so header height doesn't expand */
+.header .brand-logo { height: 64px; max-height: 64px; transform: scale(1.85); transform-origin: left center; }
 
 .nav-links {
     display: flex;
@@ -685,6 +679,9 @@ body {
   text-decoration-color: #333;
 }
 
+/* Footer logo */
+.footer-logo { height: 150px; display: block; margin-bottom: 6px; }
+
 .footer-subtitle {
   font-size: 16px;
   font-weight: 600;
@@ -1092,6 +1089,8 @@ body {
         flex-direction: column;
         gap: 20px;
     }
+    .brand-logo { height: 250px; }
+    .header .brand-logo { height: 48px; max-height: 48px; transform: scale(1.60); transform-origin: left center; }
     
     .nav-links {
         flex-wrap: wrap;
