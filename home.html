@@ -6,6 +6,10 @@
     <title>Ceyliz</title>
     <link rel="stylesheet" href="style.css" />
     <link rel="icon" href="CEYLIZ favicon icon.svg" type="image/svg+xml" />
+    <script
+      type="module"
+      src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"
+    ></script>
   </head>
   <body>
     <!-- Page Loader -->
@@ -73,10 +77,13 @@
           <span class="section-label">ABOUT</span>
           <h2 class="section-title">Who we are</h2>
           <p class="section-description">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-            aliquip ex ea commodo consequat.
+            CEYLIZ is a modern business automation platform designed for
+            startups and small businesses. We help you work smarter not harder
+            by using AI tools that simplify daily tasks, save time, and boost
+            productivity. From managing customers to sending emails or handling
+            data, we make automation easy for everyone, even without coding. Our
+            goal is simple: empower every entrepreneur to grow confidently in
+            the digital world.
           </p>
           <button class="section-btn">LEARN MORE</button>
         </div>
@@ -90,16 +97,46 @@
     <section class="what-we-do" id="work">
       <div class="what-we-do-content">
         <div class="what-we-do-image">
-          <div class="abstract-image-2"></div>
+          <model-viewer
+            src="model.glb"
+            alt="CEYLIZ automation model"
+            class="model-3d"
+            auto-rotate
+            auto-rotate-delay="0"
+            rotation-per-second="10deg"
+            camera-controls
+            ar
+            exposure="1.0"
+            environment-image="neutral"
+            disable-zoom
+            style="background-color: transparent"
+          ></model-viewer>
         </div>
         <div class="what-we-do-text">
           <span class="section-label">SERVICES</span>
           <h2 class="section-title">What we do</h2>
           <p class="section-description">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-            aliquip ex ea commodo consequat.
+            We provide automation solutions that help your business run smoothly
+            from day one. Whether you’re building your brand, handling clients,
+            or analyzing data CEYLIZ connects it all in one smart system.
+          </p>
+          <ul class="plan-features" style="margin-bottom: 20px">
+            <li>
+              <strong>AI Workflows</strong> – Automate repetitive tasks like
+              form submissions, emails, and lead tracking.
+            </li>
+            <li>
+              <strong>Data Sync</strong> – Connect tools like Google Sheets,
+              Gmail, and CRMs effortlessly.
+            </li>
+            <li>
+              <strong>Website Automation</strong> – Integrate your site forms,
+              chat, and analytics without coding.
+            </li>
+          </ul>
+          <p class="section-description" style="margin-top: -10px">
+            Let us handle the tech, so you can focus on what really matters —
+            your business.
           </p>
           <button class="section-btn">LEARN MORE</button>
         </div>
@@ -185,8 +222,9 @@
       <div class="cta-content">
         <h2 class="cta-title">Grow your business.</h2>
         <p class="cta-description">
-          Today is the day to build the business of your dreams. Share your
-          mission with the world — and blow your customers away.
+          Today is the best time to turn your ideas into action. Start
+          automating your workflow, building your online presence, and
+          connecting with your audience — all with CEYLIZ
         </p>
         <button class="cta-btn">START NOW</button>
       </div>
@@ -198,8 +236,8 @@
         <span class="section-label">CONTACT</span>
         <h2 class="section-title">Get in Touch</h2>
         <p class="section-description">
-          Ready to grow your business? Contact us today to discuss your project
-          and see how we can help you achieve your goals.
+          Ready to grow your business? Let’s talk about your goals and explore
+          how CEYLIZ can help automate and scale your work.
         </p>
         <div class="contact-info-section">
           <div class="contact-details">
@@ -305,7 +343,7 @@
         </div>
       </div>
       <div class="footer-bottom">
-        <p>&copy; 2024 Business. All rights reserved.</p>
+        <p>&copy; 2024 Ceyliz. All rights reserved.</p>
         <div class="footer-social">
           <a href="#" class="social-link">Facebook</a>
           <a href="#" class="social-link">Twitter</a>
