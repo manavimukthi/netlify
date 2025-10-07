@@ -1,38 +1,40 @@
 // Smooth scrolling for navigation links
 document.addEventListener('DOMContentLoaded', function() {
-    // Page Loader: show animated SVG and fade out when ready
+    // Page Loader: fade out quickly after DOM is ready with hard max cap
     const loader = document.getElementById('pageLoader');
     if (loader) {
         const fadeOut = () => {
-            loader.style.transition = 'opacity .45s ease';
+            if (!loader) return;
+            loader.style.transition = 'opacity .35s ease';
             loader.style.opacity = '0';
-            setTimeout(() => loader.remove(), 450);
+            setTimeout(() => loader && loader.remove(), 350);
         };
 
-        const waitOneCycleThenFade = () => {
-            // Wait ~2.1s (slightly longer than SVG animate dur=2s), then fade
-            setTimeout(fadeOut, 2100);
-        };
+        // Hard max: never keep loader longer than 1200ms after DOM is ready
+        const hardMaxTimeout = setTimeout(fadeOut, 1200);
 
+        // Prefer fading as soon as the inline logo object is ready
         const svgObject = loader.querySelector('object.loader-logo');
+        const tryFastFinish = () => {
+            // Small delay to allow first paint; then fade
+            setTimeout(fadeOut, 150);
+            clearTimeout(hardMaxTimeout);
+        };
+
         if (svgObject) {
-            // Ensure we start counting after the SVG is loaded
-            svgObject.addEventListener('load', () => {
-                // Also ensure page is ready
-                if (document.readyState === 'complete') {
-                    waitOneCycleThenFade();
-                } else {
-                    window.addEventListener('load', waitOneCycleThenFade, { once: true });
-                }
-            }, { once: true });
+            // If it loads, finish quickly; if not, hard max will trigger
+            svgObject.addEventListener('load', tryFastFinish, { once: true });
+            // If already loaded from cache
+            if (svgObject.contentDocument) tryFastFinish();
         } else {
-            // Fallback: just fade after page load
-            if (document.readyState === 'complete') {
-                waitOneCycleThenFade();
-            } else {
-                window.addEventListener('load', waitOneCycleThenFade, { once: true });
-            }
+            // No logo object; finish fast
+            tryFastFinish();
         }
+
+        // As an extra safety, also close on visibilitychange when page becomes visible
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') tryFastFinish();
+        }, { once: true });
     }
     // Get all navigation links
     const navLinks = document.querySelectorAll('.nav-link');
