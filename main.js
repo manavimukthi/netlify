@@ -808,10 +808,13 @@ class AboutAnimatedChart {
         this.container = document.getElementById('aboutChart');
         if (!this.container) return;
         
+        // iOS Safari compatibility fix
+        this.isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+        
         // Get responsive dimensions
         this.updateDimensions();
         
-        this.points = 80; // More points for smoother dramatic curves
+        this.points = this.isIOS ? 60 : 80; // Reduce points for iOS performance
         this.isAnimating = false;
         this.animationId = null;
         this.time = 0;
@@ -819,26 +822,68 @@ class AboutAnimatedChart {
         this.redData = [];
         this.blueData = [];
         
-        this.generateInitialData();
-        this.drawChart();
-        this.start();
+        // Delay initialization for iOS
+        if (this.isIOS) {
+            setTimeout(() => {
+                this.generateInitialData();
+                this.drawChart();
+                this.start();
+            }, 500);
+        } else {
+            this.generateInitialData();
+            this.drawChart();
+            this.start();
+        }
         
-        // Add resize listener
+        // Add resize listener with iOS compatibility
+        this.resizeTimeout = null;
         window.addEventListener('resize', () => this.handleResize());
+        window.addEventListener('orientationchange', () => this.handleOrientationChange());
     }
     
     updateDimensions() {
+        // iOS Safari viewport fix
+        if (this.isIOS) {
+            // Force layout recalculation for iOS
+            this.container.style.display = 'none';
+            this.container.offsetHeight; // Trigger reflow
+            this.container.style.display = 'block';
+        }
+        
         const containerRect = this.container.getBoundingClientRect();
         this.width = Math.min(containerRect.width - 40, 360);
         this.height = Math.min(containerRect.height - 40, 260);
         this.startX = 20;
         this.startY = this.height / 2;
+        
+        // Ensure minimum dimensions for iOS
+        if (this.isIOS) {
+            this.width = Math.max(this.width, 200);
+            this.height = Math.max(this.height, 120);
+        }
     }
     
     handleResize() {
-        this.updateDimensions();
-        this.generateInitialData();
-        this.drawChart();
+        // Debounce resize for iOS
+        if (this.resizeTimeout) {
+            clearTimeout(this.resizeTimeout);
+        }
+        this.resizeTimeout = setTimeout(() => {
+            this.updateDimensions();
+            this.generateInitialData();
+            this.drawChart();
+        }, this.isIOS ? 300 : 100);
+    }
+    
+    handleOrientationChange() {
+        // iOS orientation change fix
+        if (this.isIOS) {
+            setTimeout(() => {
+                this.updateDimensions();
+                this.generateInitialData();
+                this.drawChart();
+            }, 500);
+        }
     }
     
     generateInitialData() {
@@ -865,7 +910,7 @@ class AboutAnimatedChart {
     }
     
     updateData() {
-        this.time += 0.008; // Very slow animation
+        this.time += this.isIOS ? 0.012 : 0.008; // Slightly faster for iOS
         
         for (let i = 0; i < this.points; i++) {
             const x = this.startX + (i * (this.width / (this.points - 1)));
