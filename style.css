@@ -359,18 +359,30 @@ body {
     align-items: center;
     justify-content: center;
     min-height: 200px;
-    /* iOS Safari fixes */
+    /* Universal mobile fixes */
     -webkit-transform: translateZ(0);
     transform: translateZ(0);
     -webkit-backface-visibility: hidden;
     backface-visibility: hidden;
+    /* Force hardware acceleration */
+    will-change: transform;
+    /* Prevent text selection on mobile */
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 #aboutChart {
-    /* iOS Safari SVG fixes */
+    /* Universal mobile SVG fixes */
     -webkit-transform: translateZ(0);
     transform: translateZ(0);
     will-change: transform;
+    /* Ensure SVG renders properly on mobile */
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
 }
 
 @media (max-width: 768px) {

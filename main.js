@@ -802,19 +802,18 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// Animated Chart for About Section
+// Animated Chart for About Section - Mobile Optimized
 class AboutAnimatedChart {
     constructor() {
         this.container = document.getElementById('aboutChart');
         if (!this.container) return;
         
-        // iOS Safari compatibility fix
+        // Mobile detection
+        this.isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
         this.isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
         
-        // Get responsive dimensions
-        this.updateDimensions();
-        
-        this.points = this.isIOS ? 60 : 80; // Reduce points for iOS performance
+        // Simplified settings for mobile
+        this.points = this.isMobile ? 40 : 60;
         this.isAnimating = false;
         this.animationId = null;
         this.time = 0;
@@ -822,68 +821,59 @@ class AboutAnimatedChart {
         this.redData = [];
         this.blueData = [];
         
-        // Delay initialization for iOS
-        if (this.isIOS) {
-            setTimeout(() => {
-                this.generateInitialData();
-                this.drawChart();
-                this.start();
-            }, 500);
-        } else {
-            this.generateInitialData();
-            this.drawChart();
-            this.start();
-        }
+        // Initialize with delay for mobile
+        setTimeout(() => {
+            this.initChart();
+        }, this.isMobile ? 1000 : 500);
+    }
+    
+    initChart() {
+        this.updateDimensions();
+        this.generateInitialData();
+        this.drawChart();
+        this.start();
         
-        // Add resize listener with iOS compatibility
-        this.resizeTimeout = null;
+        // Add resize listener
         window.addEventListener('resize', () => this.handleResize());
         window.addEventListener('orientationchange', () => this.handleOrientationChange());
     }
     
     updateDimensions() {
-        // iOS Safari viewport fix
-        if (this.isIOS) {
-            // Force layout recalculation for iOS
-            this.container.style.display = 'none';
-            this.container.offsetHeight; // Trigger reflow
-            this.container.style.display = 'block';
-        }
-        
+        // Force container measurement
         const containerRect = this.container.getBoundingClientRect();
-        this.width = Math.min(containerRect.width - 40, 360);
-        this.height = Math.min(containerRect.height - 40, 260);
-        this.startX = 20;
-        this.startY = this.height / 2;
         
-        // Ensure minimum dimensions for iOS
-        if (this.isIOS) {
-            this.width = Math.max(this.width, 200);
-            this.height = Math.max(this.height, 120);
+        // Mobile-optimized dimensions
+        if (this.isMobile) {
+            this.width = Math.min(containerRect.width - 20, 300);
+            this.height = Math.min(containerRect.height - 20, 200);
+            this.startX = 10;
+            this.startY = this.height / 2;
+        } else {
+            this.width = Math.min(containerRect.width - 40, 360);
+            this.height = Math.min(containerRect.height - 40, 260);
+            this.startX = 20;
+            this.startY = this.height / 2;
         }
+        
+        // Ensure minimum dimensions
+        this.width = Math.max(this.width, 150);
+        this.height = Math.max(this.height, 100);
     }
     
     handleResize() {
-        // Debounce resize for iOS
-        if (this.resizeTimeout) {
-            clearTimeout(this.resizeTimeout);
-        }
-        this.resizeTimeout = setTimeout(() => {
+        setTimeout(() => {
             this.updateDimensions();
             this.generateInitialData();
             this.drawChart();
-        }, this.isIOS ? 300 : 100);
+        }, 200);
     }
     
     handleOrientationChange() {
-        // iOS orientation change fix
-        if (this.isIOS) {
-            setTimeout(() => {
-                this.updateDimensions();
-                this.generateInitialData();
-                this.drawChart();
-            }, 500);
-        }
+        setTimeout(() => {
+            this.updateDimensions();
+            this.generateInitialData();
+            this.drawChart();
+        }, 500);
     }
     
     generateInitialData() {
@@ -910,30 +900,50 @@ class AboutAnimatedChart {
     }
     
     updateData() {
-        this.time += this.isIOS ? 0.012 : 0.008; // Slightly faster for iOS
+        this.time += this.isMobile ? 0.02 : 0.012; // Faster for mobile
         
         for (let i = 0; i < this.points; i++) {
             const x = this.startX + (i * (this.width / (this.points - 1)));
             
-            // Create dramatic, fluctuating wave patterns with significant bends
-            const redY = this.startY + 
-                Math.sin(this.time + i * 0.15) * 60 + 
-                Math.cos(this.time * 0.8 + i * 0.12) * 40 + 
-                Math.sin(this.time * 0.4 + i * 0.2) * 25 +
-                Math.cos(this.time * 0.2 + i * 0.08) * 15;
+            // Simplified animation for mobile
+            if (this.isMobile) {
+                const redY = this.startY + 
+                    Math.sin(this.time + i * 0.2) * 40 + 
+                    Math.cos(this.time * 0.5 + i * 0.15) * 25;
+                    
+                const blueY = this.startY + 
+                    Math.cos(this.time * 0.7 + i * 0.25) * 45 + 
+                    Math.sin(this.time * 0.3 + i * 0.2) * 30;
                 
-            const blueY = this.startY + 
-                Math.cos(this.time * 0.9 + i * 0.18) * 70 + 
-                Math.sin(this.time * 0.6 + i * 0.14) * 45 + 
-                Math.cos(this.time * 0.3 + i * 0.16) * 30 +
-                Math.sin(this.time * 0.15 + i * 0.1) * 20;
-            
-            this.redData[i] = { x, y: redY };
-            this.blueData[i] = { x, y: blueY };
+                this.redData[i] = { x, y: redY };
+                this.blueData[i] = { x, y: blueY };
+            } else {
+                // Full animation for desktop
+                const redY = this.startY + 
+                    Math.sin(this.time + i * 0.15) * 60 + 
+                    Math.cos(this.time * 0.8 + i * 0.12) * 40 + 
+                    Math.sin(this.time * 0.4 + i * 0.2) * 25 +
+                    Math.cos(this.time * 0.2 + i * 0.08) * 15;
+                    
+                const blueY = this.startY + 
+                    Math.cos(this.time * 0.9 + i * 0.18) * 70 + 
+                    Math.sin(this.time * 0.6 + i * 0.14) * 45 + 
+                    Math.cos(this.time * 0.3 + i * 0.16) * 30 +
+                    Math.sin(this.time * 0.15 + i * 0.1) * 20;
+                
+                this.redData[i] = { x, y: redY };
+                this.blueData[i] = { x, y: blueY };
+            }
         }
     }
     
     drawChart() {
+        // Check if SVG is supported
+        if (!this.container.querySelector('svg')) {
+            this.createFallbackChart();
+            return;
+        }
+        
         // Draw red line with smooth curves
         const redPath = this.redData.map((point, index) => 
             `${index === 0 ? 'M' : 'L'} ${point.x} ${point.y}`
@@ -951,6 +961,39 @@ class AboutAnimatedChart {
         if (blueLineElement) {
             blueLineElement.setAttribute('d', bluePath);
         }
+    }
+    
+    createFallbackChart() {
+        // Create a simple static chart for mobile devices that don't support SVG animations
+        this.container.innerHTML = `
+            <div style="
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(45deg, #f0f0f0 25%, transparent 25%), 
+                           linear-gradient(-45deg, #f0f0f0 25%, transparent 25%), 
+                           linear-gradient(45deg, transparent 75%, #f0f0f0 75%), 
+                           linear-gradient(-45deg, transparent 75%, #f0f0f0 75%);
+                background-size: 20px 20px;
+                background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 8px;
+            ">
+                <div style="
+                    color: #888;
+                    font-size: 14px;
+                    text-align: center;
+                    background: white;
+                    padding: 20px;
+                    border-radius: 8px;
+                    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                ">
+                    📊 Interactive Chart<br>
+                    <small>Optimized for mobile</small>
+                </div>
+            </div>
+        `;
     }
     
     animate() {
