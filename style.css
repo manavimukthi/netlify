@@ -349,12 +349,26 @@ body {
     position: relative;
 }
 
-.abstract-image-1 {
+.animated-chart-container {
     width: 100%;
     height: 100%;
-    background-color: #000;
-    position: relative;
+    background-color: white;
     border-radius: 8px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.about-line {
+    fill: none;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.about-line-gray {
+    stroke: #ccc;
 }
 
 .abstract-image-1::before {
@@ -404,6 +418,127 @@ body {
     position: relative;
 }
 
+/* Animated Chart Section */
+.chart-section {
+    padding: 80px 20px;
+    background-color: #f8f9fa;
+}
+
+.chart-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.chart-container {
+    margin-top: 50px;
+    display: flex;
+    justify-content: center;
+}
+
+.chart-wrapper {
+    background: #fff;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    max-width: 900px;
+    width: 100%;
+}
+
+.animated-chart {
+    width: 100%;
+    height: auto;
+    max-height: 500px;
+}
+
+.chart-line {
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
+    animation: drawLine 2s ease-in-out forwards;
+}
+
+.red-line {
+    animation-delay: 0.5s;
+}
+
+.blue-line {
+    animation-delay: 1s;
+}
+
+@keyframes drawLine {
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+.data-points {
+    opacity: 0;
+    animation: fadeInPoints 0.5s ease-in-out forwards;
+}
+
+.red-points {
+    animation-delay: 2s;
+}
+
+.blue-points {
+    animation-delay: 2.5s;
+}
+
+@keyframes fadeInPoints {
+    to {
+        opacity: 1;
+    }
+}
+
+.data-point {
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.data-point:hover {
+    transform: scale(1.5);
+    filter: brightness(1.2);
+}
+
+.axis-label {
+    font-family: 'Arial', sans-serif;
+    font-size: 12px;
+    fill: #666;
+    text-anchor: middle;
+}
+
+.legend-text {
+    font-family: 'Arial', sans-serif;
+    font-size: 12px;
+    fill: #333;
+    font-weight: 500;
+}
+
+.legend {
+    opacity: 0;
+    animation: fadeInLegend 0.5s ease-in-out forwards;
+    animation-delay: 3s;
+}
+
+@keyframes fadeInLegend {
+    to {
+        opacity: 1;
+    }
+}
+
+/* Chart animation effects */
+.chart-line {
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.red-line {
+    filter: drop-shadow(0 2px 4px rgba(231, 76, 60, 0.3));
+}
+
+.blue-line {
+    filter: drop-shadow(0 2px 4px rgba(52, 152, 219, 0.3));
+}
+
 .abstract-image-2 {
     display: none;
 }
@@ -421,6 +556,49 @@ body {
   width: 100%;
   height: 100%;
   border-radius: 8px;
+}
+
+/* Hide AR button on mobile devices */
+@media (max-width: 768px) {
+  .model-3d::part(default-ar-button) {
+    display: none !important;
+  }
+  
+  /* Hide the AR button using CSS selector */
+  model-viewer::part(default-ar-button) {
+    display: none !important;
+  }
+  
+  /* Alternative method to hide AR button */
+  .model-3d .default-ar-button {
+    display: none !important;
+  }
+  
+  /* Hide AR button completely on mobile */
+  model-viewer .default-ar-button {
+    display: none !important;
+  }
+}
+
+/* 3D Model Loading Optimizations */
+.model-3d {
+  /* Optimize rendering performance */
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Loading state for 3D model */
+.model-3d[loading] {
+  opacity: 0.7;
+  filter: blur(1px);
+}
+
+.model-3d:not([loading]) {
+  opacity: 1;
+  filter: none;
+  transition: opacity 0.5s ease, filter 0.5s ease;
 }
 
 /* Pricing Section */
@@ -1593,4 +1771,34 @@ body {
 
 @media (max-width: 420px) {
   .chat-window { width: 96vw; right: -8px; max-height: 85vh; }
+  
+  #wireframe-container {
+    max-width: 300px;
+    max-height: 300px;
+  }
+}
+
+@media (max-width: 768px) {
+  #wireframe-container {
+    max-width: 350px;
+    max-height: 350px;
+  }
+}
+
+#wireframe-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    max-width: 400px;
+    max-height: 400px;
+}
+
+#wireframe-container canvas {
+    background-color: transparent !important;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
 }

@@ -6,10 +6,13 @@
     <title>Ceyliz</title>
     <link rel="stylesheet" href="style.css" />
     <link rel="icon" href="CEYLIZ favicon icon.svg" type="image/svg+xml" />
-    <script
-      type="module"
-      src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"
-    ></script>
+    <!-- Preload model-viewer script -->
+    <link
+      rel="preload"
+      href="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"
+      as="script"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   </head>
   <body>
     <!-- Page Loader -->
@@ -88,7 +91,17 @@
           <button class="section-btn">LEARN MORE</button>
         </div>
         <div class="about-image">
-          <div class="abstract-image-1"></div>
+          <div class="animated-chart-container">
+            <svg id="aboutChart" viewBox="0 0 400 300">
+              <!-- Lines only -->
+              <path id="aboutRedLine" class="about-line about-line-gray" d="" />
+              <path
+                id="aboutBlueLine"
+                class="about-line about-line-gray"
+                d=""
+              />
+            </svg>
+          </div>
         </div>
       </div>
     </section>
@@ -97,20 +110,7 @@
     <section class="what-we-do" id="work">
       <div class="what-we-do-content">
         <div class="what-we-do-image">
-          <model-viewer
-            src="model.glb"
-            alt="CEYLIZ automation model"
-            class="model-3d"
-            auto-rotate
-            auto-rotate-delay="0"
-            rotation-per-second="10deg"
-            camera-controls
-            ar
-            exposure="1.0"
-            environment-image="neutral"
-            disable-zoom
-            style="background-color: transparent"
-          ></model-viewer>
+          <div id="wireframe-container"></div>
         </div>
         <div class="what-we-do-text">
           <span class="section-label">SERVICES</span>

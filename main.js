@@ -576,6 +576,81 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize authentication modal
     initializeAuthModal();
 
+    // Optimize 3D model loading and hide AR button on mobile
+    const optimizeModelViewer = () => {
+        const modelViewer = document.querySelector('model-viewer');
+        if (modelViewer) {
+            // Preload the model for faster loading
+            modelViewer.setAttribute('preload', '');
+            modelViewer.setAttribute('loading', 'eager');
+            
+            // Hide AR button on mobile devices
+            const isMobile = window.innerWidth <= 768;
+            if (isMobile) {
+                // Remove AR attribute on mobile
+                modelViewer.removeAttribute('ar');
+                
+                // Add CSS to hide AR button
+                const style = document.createElement('style');
+                style.textContent = `
+                    model-viewer::part(default-ar-button) {
+                        display: none !important;
+                    }
+                    .model-3d::part(default-ar-button) {
+                        display: none !important;
+                    }
+                    model-viewer .default-ar-button {
+                        display: none !important;
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+            
+            // Add loading optimization and progress tracking
+            let loadStartTime = performance.now();
+            
+            modelViewer.addEventListener('load', () => {
+                const loadTime = performance.now() - loadStartTime;
+                console.log(`3D model loaded successfully in ${loadTime.toFixed(2)}ms`);
+                
+                // Add smooth fade-in animation
+                modelViewer.style.opacity = '0';
+                modelViewer.style.transition = 'opacity 0.5s ease';
+                setTimeout(() => {
+                    modelViewer.style.opacity = '1';
+                }, 100);
+            });
+            
+            modelViewer.addEventListener('error', (e) => {
+                console.error('3D model failed to load:', e);
+                // Show fallback content if model fails to load
+                const fallback = document.createElement('div');
+                fallback.style.cssText = `
+                    width: 100%;
+                    height: 100%;
+                    background: linear-gradient(45deg, #f0f0f0, #e0e0e0);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    color: #666;
+                    font-size: 16px;
+                    border-radius: 8px;
+                `;
+                fallback.textContent = '3D Model Loading...';
+                modelViewer.parentNode.insertBefore(fallback, modelViewer);
+            });
+            
+            // Optimize for mobile performance
+            if (isMobile) {
+                modelViewer.setAttribute('interaction-prompt', 'none');
+                modelViewer.setAttribute('interaction-prompt-threshold', '0');
+            }
+        }
+    };
+
+    // Initialize model optimization
+    optimizeModelViewer();
+
     // Dashboard interactions
     const initDashboard = () => {
         const menuButtons = document.querySelectorAll('.menu-item');
@@ -726,3 +801,202 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+// Animated Chart for About Section
+class AboutAnimatedChart {
+    constructor() {
+        this.width = 360;
+        this.height = 260;
+        this.startX = 20;
+        this.startY = 150;
+        this.points = 80; // More points for smoother dramatic curves
+        this.isAnimating = false;
+        this.animationId = null;
+        this.time = 0;
+        
+        this.redData = [];
+        this.blueData = [];
+        
+        this.generateInitialData();
+        this.drawChart();
+        this.start();
+    }
+    
+    generateInitialData() {
+        this.redData = [];
+        this.blueData = [];
+        
+        for (let i = 0; i < this.points; i++) {
+            const x = this.startX + (i * (this.width / (this.points - 1)));
+            
+            // Generate dramatic initial data with significant bends
+            const redY = this.startY + 
+                Math.sin(i * 0.2) * 50 + 
+                Math.cos(i * 0.25) * 35 + 
+                Math.sin(i * 0.4) * 20;
+                
+            const blueY = this.startY + 
+                Math.cos(i * 0.18) * 60 + 
+                Math.sin(i * 0.3) * 40 + 
+                Math.cos(i * 0.5) * 25;
+            
+            this.redData.push({ x, y: redY });
+            this.blueData.push({ x, y: blueY });
+        }
+    }
+    
+    updateData() {
+        this.time += 0.008; // Very slow animation
+        
+        for (let i = 0; i < this.points; i++) {
+            const x = this.startX + (i * (this.width / (this.points - 1)));
+            
+            // Create dramatic, fluctuating wave patterns with significant bends
+            const redY = this.startY + 
+                Math.sin(this.time + i * 0.15) * 60 + 
+                Math.cos(this.time * 0.8 + i * 0.12) * 40 + 
+                Math.sin(this.time * 0.4 + i * 0.2) * 25 +
+                Math.cos(this.time * 0.2 + i * 0.08) * 15;
+                
+            const blueY = this.startY + 
+                Math.cos(this.time * 0.9 + i * 0.18) * 70 + 
+                Math.sin(this.time * 0.6 + i * 0.14) * 45 + 
+                Math.cos(this.time * 0.3 + i * 0.16) * 30 +
+                Math.sin(this.time * 0.15 + i * 0.1) * 20;
+            
+            this.redData[i] = { x, y: redY };
+            this.blueData[i] = { x, y: blueY };
+        }
+    }
+    
+    drawChart() {
+        // Draw red line with smooth curves
+        const redPath = this.redData.map((point, index) => 
+            `${index === 0 ? 'M' : 'L'} ${point.x} ${point.y}`
+        ).join(' ');
+        const redLineElement = document.getElementById('aboutRedLine');
+        if (redLineElement) {
+            redLineElement.setAttribute('d', redPath);
+        }
+        
+        // Draw blue line with smooth curves
+        const bluePath = this.blueData.map((point, index) => 
+            `${index === 0 ? 'M' : 'L'} ${point.x} ${point.y}`
+        ).join(' ');
+        const blueLineElement = document.getElementById('aboutBlueLine');
+        if (blueLineElement) {
+            blueLineElement.setAttribute('d', bluePath);
+        }
+    }
+    
+    animate() {
+        if (!this.isAnimating) return;
+        
+        this.updateData();
+        this.drawChart();
+        
+        this.animationId = requestAnimationFrame(() => this.animate());
+    }
+    
+    start() {
+        this.isAnimating = true;
+        this.animate();
+    }
+    
+    stop() {
+        this.isAnimating = false;
+        if (this.animationId) {
+            cancelAnimationFrame(this.animationId);
+        }
+    }
+}
+
+// Initialize the about chart when the page loads
+document.addEventListener('DOMContentLoaded', () => {
+    // Wait a bit for the page to fully load
+    setTimeout(() => {
+        const aboutChart = document.getElementById('aboutChart');
+        if (aboutChart) {
+            new AboutAnimatedChart();
+        }
+        
+        // Initialize wireframe model
+        initWireframeModel();
+    }, 1000);
+});
+
+// Wireframe 3D Model
+function initWireframeModel() {
+    const container = document.getElementById('wireframe-container');
+    if (!container) return;
+    
+    // Get container dimensions
+    const containerRect = container.getBoundingClientRect();
+    const size = Math.min(containerRect.width, containerRect.height, 400);
+    
+    // Scene Setup
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, size / size, 0.1, 1000);
+    camera.position.z = 8;
+    
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(size, size);
+    renderer.setClearColor(0x000000, 0); // Completely transparent background
+    container.appendChild(renderer.domElement);
+    
+    // Model Creation: Two Gray Wireframe Layers
+    const radius = 4; // Increased from 3 to 4 for larger model
+    const detail = 3;
+    const baseGeometry = new THREE.IcosahedronGeometry(radius, detail);
+    
+    // Layer 1: Dense Wireframe (Darker Gray)
+    const material1 = new THREE.MeshBasicMaterial({
+        color: 0x808080, // Dark Gray
+        wireframe: true,
+        wireframeLinewidth: 1.5,
+    });
+    const denseWireframe = new THREE.Mesh(baseGeometry, material1);
+    scene.add(denseWireframe);
+    
+    // Layer 2: Sparse Wireframe (Lighter Gray)
+    const material2 = new THREE.MeshBasicMaterial({
+        color: 0xa0a0a0, // Lighter Gray
+        wireframe: true,
+        wireframeLinewidth: 1,
+        transparent: true,
+        opacity: 0.5,
+        depthTest: false,
+    });
+    
+    const sparseGeometry = new THREE.IcosahedronGeometry(radius * 1.02, 1);
+    const sparseWireframe = new THREE.Mesh(sparseGeometry, material2);
+    scene.add(sparseWireframe);
+    
+    // Animation Loop
+    function animate() {
+        requestAnimationFrame(animate);
+        
+        // Rotate both models together (slower rotation)
+        denseWireframe.rotation.x += 0.002;
+        denseWireframe.rotation.y += 0.002;
+        
+        sparseWireframe.rotation.x += 0.002;
+        sparseWireframe.rotation.y += 0.002;
+        
+        renderer.render(scene, camera);
+    }
+    
+    // Responsive handler
+    function handleResize() {
+        const newSize = Math.min(container.getBoundingClientRect().width, container.getBoundingClientRect().height, 400);
+        camera.aspect = newSize / newSize;
+        camera.updateProjectionMatrix();
+        renderer.setSize(newSize, newSize);
+    }
+    
+    // Add resize listener
+    window.addEventListener('resize', handleResize);
+    
+    // Start animation
+    animate();
+}
