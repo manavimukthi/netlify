@@ -938,8 +938,12 @@ class AboutAnimatedChart {
     }
     
     drawChart() {
-        // Check if SVG is supported
-        if (!this.container.querySelector('svg')) {
+        // Ensure the container is an actual SVG element; if not, show a fallback.
+        // Previous code checked for a nested <svg> which is wrong because
+        // `this.container` is already the SVG element. That caused the
+        // fallback to be created every time and prevented the lines from
+        // rendering.
+        if (!(this.container instanceof SVGElement)) {
             this.createFallbackChart();
             return;
         }
