@@ -805,10 +805,12 @@ document.addEventListener('DOMContentLoaded', function() {
 // Animated Chart for About Section
 class AboutAnimatedChart {
     constructor() {
-        this.width = 360;
-        this.height = 260;
-        this.startX = 20;
-        this.startY = 150;
+        this.container = document.getElementById('aboutChart');
+        if (!this.container) return;
+        
+        // Get responsive dimensions
+        this.updateDimensions();
+        
         this.points = 80; // More points for smoother dramatic curves
         this.isAnimating = false;
         this.animationId = null;
@@ -820,6 +822,23 @@ class AboutAnimatedChart {
         this.generateInitialData();
         this.drawChart();
         this.start();
+        
+        // Add resize listener
+        window.addEventListener('resize', () => this.handleResize());
+    }
+    
+    updateDimensions() {
+        const containerRect = this.container.getBoundingClientRect();
+        this.width = Math.min(containerRect.width - 40, 360);
+        this.height = Math.min(containerRect.height - 40, 260);
+        this.startX = 20;
+        this.startY = this.height / 2;
+    }
+    
+    handleResize() {
+        this.updateDimensions();
+        this.generateInitialData();
+        this.drawChart();
     }
     
     generateInitialData() {

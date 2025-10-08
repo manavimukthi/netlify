@@ -354,10 +354,25 @@ body {
     height: 100%;
     background-color: white;
     border-radius: 8px;
-    padding: 20px;
+    padding: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
+    min-height: 200px;
+}
+
+@media (max-width: 768px) {
+    .animated-chart-container {
+        padding: 5px;
+        min-height: 150px;
+    }
+}
+
+@media (max-width: 420px) {
+    .animated-chart-container {
+        padding: 2px;
+        min-height: 120px;
+    }
 }
 
 .about-line {
@@ -1776,12 +1791,20 @@ body {
     max-width: 300px;
     max-height: 300px;
   }
+  
+  .about-image {
+    height: 250px;
+  }
 }
 
 @media (max-width: 768px) {
   #wireframe-container {
     max-width: 350px;
     max-height: 350px;
+  }
+  
+  .about-image {
+    height: 300px;
   }
 }
 
