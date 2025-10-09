@@ -951,7 +951,7 @@ function initWireframeModel() {
         renderer.setSize(newSize, newSize);
     }
     
-    // Add resize listener
+
     window.addEventListener('resize', handleResize);
     
     // Start animation
