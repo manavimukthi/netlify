@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <title>Ceyliz</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="icon" href="CEYLIZ favicon icon.svg" type="image/svg+xml" />
+    <!-- Preload model-viewer script -->
+    <link
+      rel="preload"
+      href="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"
+      as="script"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  </head>
+  <body>
+    <!-- Page Loader -->
+    <div
+      id="pageLoader"
+      class="page-loader"
+      aria-live="polite"
+      aria-label="Loading"
+    >
+      <div class="loader-inner">
+        <object
+          data="CEYLIZ Logo icon.svg"
+          type="image/svg+xml"
+          class="loader-logo"
+          aria-label="CEYLIZ animated logo"
+        >
+          CEYLIZ
+        </object>
+      </div>
+    </div>
+    <!-- Header -->
+    <header class="header">
+      <nav class="nav">
+        <div class="nav-brand">
+          <a href="home.html" class="brand-link"
+            ><img src="CEYLIZ logo.svg" alt="ceyliz" class="brand-logo"
+          /></a>
+        </div>
+        <div class="nav-links">
+          <a href="#about" class="nav-link">ABOUT</a>
+          <a href="tools.html" class="nav-link">TOOLS</a>
+          <a href="#pricing" class="nav-link">PRICING</a>
+          <a href="#contact" class="nav-link">CONTACT</a>
+          <button class="contact-btn">SIGN UP</button>
+        </div>
+      </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="hero-content">
+        <h1 class="hero-title">Grow your business.</h1>
+        <p class="hero-subtitle">
+          Give your business a boost with a beautifully crafted homepage.
+        </p>
+        <div class="hero-actions">
+          <button class="hero-btn">LEARN MORE</button>
+          <button class="hero-btn">START NOW</button>
+        </div>
+      </div>
+      <div class="hero-pattern"></div>
+    </section>
+
+    <!-- Value Proposition Section -->
+    <section class="value-prop">
+      <h2 class="value-title">
+        Grow your business, establish your brand, and put your customers first.
+      </h2>
+    </section>
+
+    <!-- About Section -->
+    <section class="about" id="about">
+      <div class="about-content">
+        <div class="about-text">
+          <span class="section-label">ABOUT</span>
+          <h2 class="section-title">Who we are</h2>
+          <p class="section-description">
+            CEYLIZ is a modern business automation platform designed for
+            startups and small businesses. We help you work smarter not harder
+            by using AI tools that simplify daily tasks, save time, and boost
+            productivity. From managing customers to sending emails or handling
+            data, we make automation easy for everyone, even without coding. Our
+            goal is simple: empower every entrepreneur to grow confidently in
+            the digital world.
+          </p>
+          <button class="section-btn">LEARN MORE</button>
+        </div>
+        <div class="about-image">
+          <div class="animated-chart-container">
+            <svg id="aboutChart" viewBox="0 0 400 300">
+              <!-- Lines only -->
+              <path id="aboutRedLine" class="about-line about-line-gray" d="" />
+              <path
+                id="aboutBlueLine"
+                class="about-line about-line-gray"
+                d=""
+              />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- What We Do Section -->
+    <section class="what-we-do" id="work">
+      <div class="what-we-do-content">
+        <div class="what-we-do-image">
+          <div id="wireframe-container"></div>
+        </div>
+        <div class="what-we-do-text">
+          <span class="section-label">SERVICES</span>
+          <h2 class="section-title">What we do</h2>
+          <p class="section-description">
+            We provide automation solutions that help your business run smoothly
+            from day one. Whether you’re building your brand, handling clients,
+            or analyzing data CEYLIZ connects it all in one smart system.
+          </p>
+          <ul class="plan-features" style="margin-bottom: 20px">
+            <li>
+              <strong>AI Workflows</strong> – Automate repetitive tasks like
+              form submissions, emails, and lead tracking.
+            </li>
+            <li>
+              <strong>Data Sync</strong> – Connect tools like Google Sheets,
+              Gmail, and CRMs effortlessly.
+            </li>
+            <li>
+              <strong>Website Automation</strong> – Integrate your site forms,
+              chat, and analytics without coding.
+            </li>
+          </ul>
+          <p class="section-description" style="margin-top: -10px">
+            Let us handle the tech, so you can focus on what really matters —
+            your business.
+          </p>
+          <button class="section-btn">LEARN MORE</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing" id="pricing">
+      <div class="pricing-content">
+        <span class="section-label">PRICING</span>
+        <h2 class="section-title">Choose Your Plan</h2>
+        <p class="section-description">
+          Select the perfect plan for your business needs. All plans include our
+          core features with flexible options.
+        </p>
+        <div class="pricing-grid">
+          <div class="pricing-card">
+            <div class="plan-header">
+              <h3 class="plan-name">Starter</h3>
+              <div class="plan-price">
+                <span class="currency">$</span>
+                <span class="amount">29</span>
+                <span class="period">/month</span>
+              </div>
+            </div>
+            <ul class="plan-features">
+              <li>Up to 5 projects</li>
+              <li>Basic support</li>
+              <li>5GB storage</li>
+              <li>Email support</li>
+              <li>Basic analytics</li>
+            </ul>
+            <button class="plan-btn">Get Started</button>
+          </div>
+
+          <div class="pricing-card featured">
+            <div class="popular-badge">Most Popular</div>
+            <div class="plan-header">
+              <h3 class="plan-name">Professional</h3>
+              <div class="plan-price">
+                <span class="currency">$</span>
+                <span class="amount">79</span>
+                <span class="period">/month</span>
+              </div>
+            </div>
+            <ul class="plan-features">
+              <li>Up to 25 projects</li>
+              <li>Priority support</li>
+              <li>50GB storage</li>
+              <li>Phone & email support</li>
+              <li>Advanced analytics</li>
+              <li>Custom integrations</li>
+            </ul>
+            <button class="plan-btn">Get Started</button>
+          </div>
+
+          <div class="pricing-card">
+            <div class="plan-header">
+              <h3 class="plan-name">Enterprise</h3>
+              <div class="plan-price">
+                <span class="currency">$</span>
+                <span class="amount">199</span>
+                <span class="period">/month</span>
+              </div>
+            </div>
+            <ul class="plan-features">
+              <li>Unlimited projects</li>
+              <li>24/7 dedicated support</li>
+              <li>500GB storage</li>
+              <li>Dedicated account manager</li>
+              <li>Custom analytics</li>
+              <li>API access</li>
+              <li>Custom integrations</li>
+            </ul>
+            <button class="plan-btn">Contact Sales</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Call to Action Section -->
+    <section class="cta">
+      <div class="cta-content">
+        <h2 class="cta-title">Grow your business.</h2>
+        <p class="cta-description">
+          Today is the best time to turn your ideas into action. Start
+          automating your workflow, building your online presence, and
+          connecting with your audience — all with CEYLIZ
+        </p>
+        <button class="cta-btn">START NOW</button>
+      </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact" id="contact">
+      <div class="contact-content">
+        <span class="section-label">CONTACT</span>
+        <h2 class="section-title">Get in Touch</h2>
+        <p class="section-description">
+          Ready to grow your business? Let’s talk about your goals and explore
+          how CEYLIZ can help automate and scale your work.
+        </p>
+        <div class="contact-info-section">
+          <div class="contact-details">
+            <div class="contact-item">
+              <h4>Phone</h4>
+              <p>(555) 123-4567</p>
+            </div>
+            <div class="contact-item">
+              <h4>Email</h4>
+              <p>info@business.com</p>
+            </div>
+            <div class="contact-item">
+              <h4>Address</h4>
+              <p>123 Business Street<br />City, State 12345</p>
+            </div>
+          </div>
+          <div class="contact-form">
+            <form id="contactForm">
+              <div class="form-group">
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  placeholder="Your Name"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  placeholder="Your Email"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <textarea
+                  id="message"
+                  name="message"
+                  placeholder="Your Message"
+                  rows="5"
+                  required
+                ></textarea>
+              </div>
+              <button type="submit" class="contact-submit-btn">
+                SEND MESSAGE
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-content">
+        <div class="footer-section">
+          <img src="CEYLIZ logo.svg" alt="ceyliz" class="footer-logo" />
+          <p class="footer-description">
+            Grow your business with our professional services and innovative
+            solutions.
+          </p>
+        </div>
+        <div class="footer-section">
+          <h4 class="footer-subtitle">Quick Links</h4>
+          <ul class="footer-links">
+            <li><a href="#about">About Us</a></li>
+            <li><a href="#work">Our Work</a></li>
+            <li><a href="#team">Team</a></li>
+            <li><a href="#blog">Blog</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4 class="footer-subtitle">Services</h4>
+          <ul class="footer-links">
+            <li><a href="#">Web Design</a></li>
+            <li><a href="#">Branding</a></li>
+            <li><a href="#">Marketing</a></li>
+            <li><a href="#">Consulting</a></li>
+            <li><a href="#">Support</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4 class="footer-subtitle">Legal</h4>
+          <ul class="footer-links">
+            <li><a href="privacy.html">Privacy Policy</a></li>
+            <li><a href="#terms-of-service">Terms of Service</a></li>
+            <li><a href="#cookie-policy">Cookie Policy</a></li>
+            <li><a href="#refund-policy">Refund Policy</a></li>
+            <li><a href="#disclaimer">Disclaimer</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4 class="footer-subtitle">Contact Info</h4>
+          <div class="contact-info">
+            <p>123 Business Street</p>
+            <p>City, State 12345</p>
+            <p>Phone: (555) 123-4567</p>
+            <p>Email: info@business.com</p>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2024 Ceyliz. All rights reserved.</p>
+        <div class="footer-social">
+          <a href="#" class="social-link">Facebook</a>
+          <a href="#" class="social-link">Twitter</a>
+          <a href="#" class="social-link">LinkedIn</a>
+          <a href="#" class="social-link">Instagram</a>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Authentication Modals -->
+    <div id="authModal" class="auth-modal">
+      <div class="auth-modal-content">
+        <div class="auth-modal-header">
+          <h2 id="authModalTitle">Sign Up</h2>
+          <span class="auth-close">&times;</span>
+        </div>
+
+        <div class="auth-tabs">
+          <button class="auth-tab active" data-tab="signup">Sign Up</button>
+          <button class="auth-tab" data-tab="login">Login</button>
+        </div>
+
+        <!-- Sign Up Form -->
+        <form id="signupForm" class="auth-form active">
+          <div class="form-group">
+            <input
+              type="text"
+              id="signupName"
+              placeholder="Full Name"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <input
+              type="email"
+              id="signupEmail"
+              placeholder="Email Address"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <input
+              type="password"
+              id="signupPassword"
+              placeholder="Password"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <input
+              type="password"
+              id="signupConfirmPassword"
+              placeholder="Confirm Password"
+              required
+            />
+          </div>
+          <button type="submit" class="auth-submit-btn">Create Account</button>
+        </form>
+
+        <!-- Login Form -->
+        <form id="loginForm" class="auth-form">
+          <div class="form-group">
+            <input
+              type="email"
+              id="loginEmail"
+              placeholder="Email Address"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <input
+              type="password"
+              id="loginPassword"
+              placeholder="Password"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label class="remember-me">
+              <input type="checkbox" id="rememberMe" />
+              <span class="checkmark"></span>
+              Remember me
+            </label>
+          </div>
+          <button type="submit" class="auth-submit-btn">Sign In</button>
+          <div class="auth-links">
+            <a href="#" class="forgot-password">Forgot Password?</a>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script src="main.js"></script>
+
+    <!-- Floating Chat Widget -->
+    <div
+      id="chatWidget"
+      class="chat-widget"
+      aria-live="polite"
+      aria-label="Chat widget"
+    >
+      <button
+        id="chatToggle"
+        class="chat-toggle"
+        aria-expanded="false"
+        aria-controls="chatWindow"
+        title="Chat with us"
+      >
+        💬
+      </button>
+      <div
+        id="chatWindow"
+        class="chat-window"
+        role="dialog"
+        aria-modal="false"
+        aria-labelledby="chatTitle"
+      >
+        <div class="chat-header">
+          <div class="chat-title" id="chatTitle">Chat</div>
+          <button class="chat-close" id="chatClose" aria-label="Close chat">
+            ×
+          </button>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+          <div class="chat-message bot">Hi! How can we help you today?</div>
+        </div>
+        <form class="chat-input" id="chatForm">
+          <input
+            type="text"
+            id="chatText"
+            placeholder="Type a message..."
+            aria-label="Type a message"
+            autocomplete="off"
+          />
+          <button type="submit" class="chat-send" aria-label="Send">
+            Send
+          </button>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>
