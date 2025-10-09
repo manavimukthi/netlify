@@ -366,21 +366,41 @@
     <script type="module">
       import { createChat } from "https://cdn.jsdelivr.net/npm/@n8n/chat/dist/chat.bundle.es.js";
 
-      createChat({
-        webhookUrl:
-          "https://kimn8nceyliz.app.n8n.cloud/webhook/6940e80d-e56f-46bd-8809-c9c268e17dbf/chat",
-      });
-      // Ensure the n8n chat iframe/widget is on top after it initializes
-      const waitForN8n = setInterval(() => {
-        const node =
-          document.querySelector('iframe[src*="n8n"]') ||
-          document.querySelector("[data-n8n]");
-        if (node) {
-          node.style.zIndex = "30000";
-          node.style.pointerEvents = "auto";
-          clearInterval(waitForN8n);
+      // Wait for page loader to be completely removed before initializing chat
+      const initializeChat = () => {
+        const loader = document.getElementById("pageLoader");
+
+        // Check if loader still exists in DOM (not just hidden)
+        if (loader) {
+          // If loader still exists, wait a bit more
+          setTimeout(initializeChat, 100);
+          return;
         }
-      }, 300);
+
+        // Initialize chat only after loader is completely removed from DOM
+        createChat({
+          webhookUrl:
+            "https://kimn8nceyliz.app.n8n.cloud/webhook/6940e80d-e56f-46bd-8809-c9c268e17dbf/chat",
+        });
+
+        // Add class to body to show chat widget
+        document.body.classList.add("page-loaded");
+
+        // Ensure the n8n chat iframe/widget is properly configured
+        const waitForN8n = setInterval(() => {
+          const node =
+            document.querySelector('iframe[src*="n8n"]') ||
+            document.querySelector("[data-n8n]");
+          if (node) {
+            node.style.zIndex = "30000";
+            node.style.pointerEvents = "auto";
+            clearInterval(waitForN8n);
+          }
+        }, 300);
+      };
+
+      // Start checking for loader completion after a short delay
+      setTimeout(initializeChat, 500);
     </script>
   </body>
 </html>
