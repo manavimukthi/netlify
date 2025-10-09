@@ -425,115 +425,18 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize category filter
     initializeCategoryFilter();
     
-    // Authentication Modal Functionality
-    const initializeAuthModal = () => {
-        const authModal = document.getElementById('authModal');
-        const signUpBtn = document.querySelector('.contact-btn');
-        const closeBtn = document.querySelector('.auth-close');
-        const authTabs = document.querySelectorAll('.auth-tab');
-        const authForms = document.querySelectorAll('.auth-form');
-        const authModalTitle = document.getElementById('authModalTitle');
-        const signupForm = document.getElementById('signupForm');
-        const loginForm = document.getElementById('loginForm');
-        
-        // Open modal when sign up button is clicked
-        if (signUpBtn) {
-            signUpBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                authModal.style.display = 'block';
-                document.body.style.overflow = 'hidden'; // Prevent background scrolling
-            });
-        }
-        
-        // Close modal when X is clicked
-        if (closeBtn) {
-            closeBtn.addEventListener('click', function() {
-                authModal.style.display = 'none';
-                document.body.style.overflow = 'auto';
-            });
-        }
-        
-        // Close modal when clicking outside
-        window.addEventListener('click', function(e) {
-            if (e.target === authModal) {
-                authModal.style.display = 'none';
-                document.body.style.overflow = 'auto';
-            }
+    // Authentication UI: navigate to standalone pages instead of using modal
+    // Change signup CTA(s) to navigate to `/signup.html` when clicked.
+    const signUpCtas = document.querySelectorAll('.contact-btn, .top-link.sign-up, .signup-link');
+    signUpCtas.forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            // If the element is an actual link, let it behave; otherwise navigate
+            if (this.tagName.toLowerCase() === 'a' && this.getAttribute('href')) return;
+            e.preventDefault();
+            window.location.href = 'signup.html';
         });
-        
-        // Tab switching functionality
-        authTabs.forEach(tab => {
-            tab.addEventListener('click', function() {
-                const targetTab = this.getAttribute('data-tab');
-                
-                // Remove active class from all tabs and forms
-                authTabs.forEach(t => t.classList.remove('active'));
-                authForms.forEach(f => f.classList.remove('active'));
-                
-                // Add active class to clicked tab
-                this.classList.add('active');
-                
-                // Show corresponding form
-                if (targetTab === 'signup') {
-                    document.getElementById('signupForm').classList.add('active');
-                    authModalTitle.textContent = 'Sign Up';
-                } else if (targetTab === 'login') {
-                    document.getElementById('loginForm').classList.add('active');
-                    authModalTitle.textContent = 'Login';
-                }
-            });
-        });
-        
-        // Form submission handling
-        if (signupForm) {
-            signupForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const name = document.getElementById('signupName').value;
-                const email = document.getElementById('signupEmail').value;
-                const password = document.getElementById('signupPassword').value;
-                const confirmPassword = document.getElementById('signupConfirmPassword').value;
-                
-                // Basic validation
-                if (password !== confirmPassword) {
-                    showAuthMessage('Passwords do not match!', 'error');
-                    return;
-                }
-                
-                if (password.length < 6) {
-                    showAuthMessage('Password must be at least 6 characters long!', 'error');
-                    return;
-                }
-                
-                // Simulate successful signup
-                showAuthMessage('Account created successfully! Welcome!', 'success');
-                setTimeout(() => {
-                    authModal.style.display = 'none';
-                    document.body.style.overflow = 'auto';
-                    signupForm.reset();
-                }, 2000);
-            });
-        }
-        
-        if (loginForm) {
-            loginForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const email = document.getElementById('loginEmail').value;
-                const password = document.getElementById('loginPassword').value;
-                const rememberMe = document.getElementById('rememberMe').checked;
-                
-                // Simulate successful login
-                showAuthMessage('Login successful! Welcome back!', 'success');
-                setTimeout(() => {
-                    authModal.style.display = 'none';
-                    document.body.style.overflow = 'auto';
-                    loginForm.reset();
-                }, 2000);
-            });
-        }
-    };
-    
+    });
+
     // Show authentication messages
     const showAuthMessage = (message, type) => {
         const messageDiv = document.createElement('div');
@@ -573,8 +476,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 3000);
     };
     
-    // Initialize authentication modal
-    initializeAuthModal();
+    // Authentication modal removed; CTAs navigate to standalone pages
 
     // Optimize 3D model loading and hide AR button on mobile
     const optimizeModelViewer = () => {

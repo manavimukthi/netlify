@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Login - CEYLIZ</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- topbar removed; using a vertical sidebar inside the left panel -->
+
+    <div class="auth-page">
+      <div class="auth-split">
+        <div class="auth-left">
+          <div class="auth-sidebar">
+            <a href="privacy.html">Privacy</a>
+            <div class="copyright">© 2025</div>
+          </div>
+          <div class="auth-hero">
+            <h2>Create an account</h2>
+            <p class="small">
+              Already have an account?
+              <a
+                href="signup.html"
+                style="color: rgba(255, 255, 255, 0.95); font-weight: 700"
+                >Sign up</a
+              >
+            </p>
+            <p>
+              Welcome to CEYLIZ — build automations, save time, and grow your
+              business with AI-powered workflows.
+            </p>
+          </div>
+        </div>
+
+        <div class="auth-right">
+          <div class="auth-card">
+            <h1>Log in</h1>
+            <p class="auth-sub">Sign in to your account</p>
+
+            <form class="auth-form" action="#" method="post">
+              <div>
+                <label for="email">Email address</label>
+                <input id="email" name="email" type="email" required />
+              </div>
+
+              <div>
+                <label for="password">Password</label>
+                <input id="password" name="password" type="password" required />
+              </div>
+
+              <div class="auth-cta">
+                <button type="submit" class="btn-primary">Log in</button>
+                <a href="#" class="btn-ghost">Forgot?</a>
+              </div>
+
+              <p class="policy-note">
+                By continuing you agree to our
+                <a href="privacy.html">Privacy Policy</a> and
+                <a href="#">Terms</a>.
+              </p>
+            </form>
+
+            <div class="auth-footer-links">
+              <p>Don't have an account? <a href="signup.html">Create one</a></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- compact footer removed (copyright shown in left sidebar) -->
+  </body>
+</html>
