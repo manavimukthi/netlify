@@ -1756,7 +1756,7 @@ div[class*="n8n"],
 .auth-card {
     width: 100%;
     max-width: 420px;
-    /* keep the card vertically centered and avoid pushing the page taller than viewport */
+    
     display: flex;
     flex-direction: column;
     justify-content: center;
