@@ -595,63 +595,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Chat Widget Logic
-    const chatWidget = document.getElementById('chatWidget');
-    const chatToggle = document.getElementById('chatToggle');
-    const chatWindow = document.getElementById('chatWindow');
-    const chatClose = document.getElementById('chatClose');
-    const chatForm = document.getElementById('chatForm');
-    const chatText = document.getElementById('chatText');
-    const chatMessages = document.getElementById('chatMessages');
-
-    const appendMessage = (text, role = 'user') => {
-        if (!chatMessages) return;
-        const msg = document.createElement('div');
-        msg.className = `chat-message ${role}`;
-        msg.textContent = text;
-        chatMessages.appendChild(msg);
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-    };
-
-    const setOpen = (open) => {
-        if (!chatWindow || !chatToggle) return;
-        chatWindow.classList.toggle('open', open);
-        chatWindow.style.display = open ? 'grid' : 'none';
-        chatToggle.setAttribute('aria-expanded', String(open));
-        if (open) setTimeout(() => chatText && chatText.focus(), 50);
-        try { localStorage.setItem('chatOpen', open ? '1' : '0'); } catch(e) {}
-    };
-
-    const botReply = (userText) => {
-        const lower = userText.trim().toLowerCase();
-        let reply = "Thanks! We'll get back to you shortly.";
-        if (lower.includes('price') || lower.includes('pricing')) reply = 'Our plans start at $29/mo. Check the Pricing section.';
-        if (lower.includes('contact')) reply = 'You can reach us via the Contact section or this chat.';
-        setTimeout(() => appendMessage(reply, 'bot'), 400);
-    };
-
-    if (chatToggle && chatWindow) {
-        chatToggle.addEventListener('click', () => setOpen(!chatWindow.classList.contains('open')));
-    }
-    if (chatClose) {
-        chatClose.addEventListener('click', () => setOpen(false));
-    }
-    if (chatForm && chatText) {
-        chatForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const text = chatText.value.trim();
-            if (!text) return;
-            appendMessage(text, 'user');
-            chatText.value = '';
-            botReply(text);
-        });
-    }
-
-    // Restore open state
-    try {
-        const wasOpen = localStorage.getItem('chatOpen') === '1';
-        if (wasOpen) setOpen(true);
-    } catch(e) {}
+    // Chat widget is provided via n8n chat embed; custom chat logic removed.
 
     // Contact form submission to n8n webhook
     const contactForm = document.getElementById('contactForm');

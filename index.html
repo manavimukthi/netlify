@@ -358,51 +358,29 @@
 
     <script src="main.js"></script>
 
-    <!-- Floating Chat Widget -->
-    <div
-      id="chatWidget"
-      class="chat-widget"
-      aria-live="polite"
-      aria-label="Chat widget"
-    >
-      <button
-        id="chatToggle"
-        class="chat-toggle"
-        aria-expanded="false"
-        aria-controls="chatWindow"
-        title="Chat with us"
-      >
-        💬
-      </button>
-      <div
-        id="chatWindow"
-        class="chat-window"
-        role="dialog"
-        aria-modal="false"
-        aria-labelledby="chatTitle"
-      >
-        <div class="chat-header">
-          <div class="chat-title" id="chatTitle">Chat</div>
-          <button class="chat-close" id="chatClose" aria-label="Close chat">
-            ×
-          </button>
-        </div>
-        <div class="chat-messages" id="chatMessages">
-          <div class="chat-message bot">Hi! How can we help you today?</div>
-        </div>
-        <form class="chat-input" id="chatForm">
-          <input
-            type="text"
-            id="chatText"
-            placeholder="Type a message..."
-            aria-label="Type a message"
-            autocomplete="off"
-          />
-          <button type="submit" class="chat-send" aria-label="Send">
-            Send
-          </button>
-        </form>
-      </div>
-    </div>
+    <!-- n8n Chat widget -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/@n8n/chat/dist/style.css"
+      rel="stylesheet"
+    />
+    <script type="module">
+      import { createChat } from "https://cdn.jsdelivr.net/npm/@n8n/chat/dist/chat.bundle.es.js";
+
+      createChat({
+        webhookUrl:
+          "https://kimn8nceyliz.app.n8n.cloud/webhook/6940e80d-e56f-46bd-8809-c9c268e17dbf/chat",
+      });
+      // Ensure the n8n chat iframe/widget is on top after it initializes
+      const waitForN8n = setInterval(() => {
+        const node =
+          document.querySelector('iframe[src*="n8n"]') ||
+          document.querySelector("[data-n8n]");
+        if (node) {
+          node.style.zIndex = "30000";
+          node.style.pointerEvents = "auto";
+          clearInterval(waitForN8n);
+        }
+      }, 300);
+    </script>
   </body>
 </html>
