@@ -358,6 +358,7 @@
 
     <script src="main.js"></script>
 
+<<<<<<< HEAD
     <!-- n8n Chat widget -->
     <link
       href="https://cdn.jsdelivr.net/npm/@n8n/chat/dist/style.css"
@@ -402,5 +403,53 @@
       // Start checking for loader completion after a short delay
       setTimeout(initializeChat, 500);
     </script>
+=======
+    <!-- Floating Chat Widget -->
+    <div
+      id="chatWidget"
+      class="chat-widget"
+      aria-live="polite"
+      aria-label="Chat widget"
+    >
+      <button
+        id="chatToggle"
+        class="chat-toggle"
+        aria-expanded="false"
+        aria-controls="chatWindow"
+        title="Chat with us"
+      >
+        💬
+      </button>
+      <div
+        id="chatWindow"
+        class="chat-window"
+        role="dialog"
+        aria-modal="false"
+        aria-labelledby="chatTitle"
+      >
+        <div class="chat-header">
+          <div class="chat-title" id="chatTitle">Chat</div>
+          <button class="chat-close" id="chatClose" aria-label="Close chat">
+            ×
+          </button>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+          <div class="chat-message bot">Hi! How can we help you today?</div>
+        </div>
+        <form class="chat-input" id="chatForm">
+          <input
+            type="text"
+            id="chatText"
+            placeholder="Type a message..."
+            aria-label="Type a message"
+            autocomplete="off"
+          />
+          <button type="submit" class="chat-send" aria-label="Send">
+            Send
+          </button>
+        </form>
+      </div>
+    </div>
+>>>>>>> 059fe95 (Site: update files (chat widget, auth pages, privacy); push latest edits)
   </body>
 </html>

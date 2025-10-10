@@ -1577,60 +1577,9 @@ body {
     }
 }
 
-/* n8n chat: Hide during page loading, show only after loading is complete */
-/* Initially hide all n8n chat elements */
-iframe[src*="n8n"], 
-[data-n8n], 
-[id*="n8n"],
-.n8n-chat-widget,
-div[class*="n8n"],
-.n8n-chat-override {
-    display: none !important;
-    visibility: hidden !important;
-    opacity: 0 !important;
-    z-index: -1 !important;
-    pointer-events: none !important;
-}
-
-/* Show chat widget only after page loading is complete */
-.page-loaded iframe[src*="n8n"], 
-.page-loaded [data-n8n], 
-.page-loaded [id*="n8n"],
-.page-loaded .n8n-chat-widget,
-.page-loaded div[class*="n8n"],
-.page-loaded .n8n-chat-override {
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    z-index: 30000 !important;
-    pointer-events: auto !important;
-}
-
-/* Additional targeting to hide 'Powered by n8n' or credits inserted by the widget.
-   Note: If the credit is rendered inside a cross-origin iframe it cannot be removed via CSS from this page.
-   These selectors will hide common placements (links, small footers) inside the widget container when not sandboxed in an iframe. */
-.page-loaded .n8n-chat-widget a[href*="n8n"],
-.page-loaded .n8n-chat-widget .powered-by,
-.page-loaded .n8n-chat-widget .n8n-credit,
-.page-loaded [data-n8n] a[href*="n8n"],
-.page-loaded [data-n8n] .powered-by,
-.page-loaded [data-n8n] .n8n-credit,
-.page-loaded iframe[src*="n8n"] + .n8n-credit,
-.page-loaded iframe[src*="n8n"] { /* try to hide sibling credit elements and iframe itself if necessary */
-    display: none !important;
-    visibility: hidden !important;
-    opacity: 0 !important;
-}
-
-/* If the widget injects a small footer or anchor with simple text, target typical words */
-/* End of n8n branding overrides */
-
-/* If removing branding is blocked by iframe cross-origin policy, you'll need to configure the n8n chat widget
-   from the n8n instance (self-host or cloud settings) to disable 'Powered by' or use your own hosted widget bundle. */
+/* Chat widget styles now handled by n8n chat widget */
 
 @media (max-width: 420px) {
-  .chat-window { width: 96vw; right: -8px; max-height: 85vh; }
-  
   #wireframe-container {
     max-width: 300px;
     max-height: 300px;
@@ -1756,7 +1705,7 @@ div[class*="n8n"],
 .auth-card {
     width: 100%;
     max-width: 420px;
-    
+    /* keep the card vertically centered and avoid pushing the page taller than viewport */
     display: flex;
     flex-direction: column;
     justify-content: center;

@@ -595,7 +595,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Chat widget is provided via n8n chat embed; custom chat logic removed.
+    // Chat widget functionality now handled by n8n chat widget
 
     // Contact form submission to n8n webhook
     const contactForm = document.getElementById('contactForm');
@@ -951,7 +951,7 @@ function initWireframeModel() {
         renderer.setSize(newSize, newSize);
     }
     
-
+    // Add resize listener
     window.addEventListener('resize', handleResize);
     
     // Start animation
