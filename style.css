@@ -1917,6 +1917,23 @@ body {
 /* Placeholder color */
 .auth-form input::placeholder { color: #A0AEC0; }
 
+/* Select styling to match inputs */
+.auth-form select {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #E2E8F0;
+  background: #FFFFFF;
+  font-size: 14px;
+  color: #1A202C;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  box-sizing: border-box;
+}
+
+.auth-form select:invalid { color: #A0AEC0; }
+
 .auth-form .small { font-size: 12px; color: #94a3b8; }
 
 .auth-cta {
