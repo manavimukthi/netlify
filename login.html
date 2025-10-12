@@ -9,8 +9,6 @@
     <link rel="icon" href="CEYLIZ favicon icon.svg" type="image/svg+xml" />
   </head>
   <body>
-    <!-- topbar removed; using a vertical sidebar inside the left panel -->
-
     <div class="auth-page">
       <div class="auth-split">
         <div class="auth-left">
@@ -19,9 +17,9 @@
             <div class="copyright">© 2025</div>
           </div>
           <div class="auth-hero">
-            <h2>Create an account</h2>
+            <h2>Welcome Back</h2>
             <p class="small">
-              Already have an account?
+              Don't have an account?
               <a
                 href="signup.html"
                 style="color: rgba(255, 255, 255, 0.95); font-weight: 700"
@@ -51,7 +49,6 @@
                 <input id="password" name="password" type="password" required />
               </div>
 
-              <!-- reCAPTCHA widget (replace `your_site_key` with your site key) -->
               <div
                 class="g-recaptcha"
                 data-sitekey="6Ld8luYrAAAAALwElBcJZx7jM5ri6Syhxa8Pfenx"
@@ -108,12 +105,30 @@
           }
 
           try {
-            await signInWithEmailAndPassword(auth, email, password);
-            window.location.href = "dashboard.html";
+            // Step 1: Sign in the user
+            const userCred = await signInWithEmailAndPassword(
+              auth,
+              email,
+              password
+            );
+            const user = userCred.user;
+
+            // Step 2: ✅ CHECK IF THE USER'S EMAIL IS VERIFIED
+            if (user.emailVerified) {
+              // If verified, proceed to the dashboard
+              window.location.href = "dashboard.html";
+            } else {
+              // If not verified, show an alert and sign them out
+              alert(
+                "Please verify your email address before logging in. Check your inbox for the verification link."
+              );
+              auth.signOut();
+            }
           } catch (err) {
             console.error("Login error", err);
             alert(err.message || "Failed to sign in");
           } finally {
+            // This will run whether the login succeeded or failed
             if (submitBtn) {
               submitBtn.disabled = false;
               submitBtn.textContent = originalText;
