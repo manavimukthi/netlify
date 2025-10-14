@@ -42,6 +42,8 @@ body {
   display: grid;
   grid-template-columns: 280px 1fr;
   gap: 30px;
+  position: relative;
+  z-index: 1;
 }
 
 /* Topbar */
