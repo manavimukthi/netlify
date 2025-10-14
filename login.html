@@ -89,6 +89,15 @@
         form.addEventListener("submit", async (e) => {
           e.preventDefault();
 
+          // Verify reCAPTCHA response before proceeding
+          const captchaResponse = window.grecaptcha
+            ? window.grecaptcha.getResponse()
+            : null;
+          if (!captchaResponse) {
+            alert("Please complete the reCAPTCHA challenge before continuing.");
+            return;
+          }
+
           const email = document.getElementById("email").value.trim();
           const password = document.getElementById("password").value;
 
