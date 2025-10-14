@@ -651,35 +651,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize model optimization
     optimizeModelViewer();
 
-    // Dashboard interactions
-    const initDashboard = () => {
-        const menuButtons = document.querySelectorAll('.menu-item');
-        const sections = document.querySelectorAll('.dash-section');
-        const badge = document.getElementById('notifyBadge');
-
-        if (menuButtons.length === 0 || sections.length === 0) return;
-
-        menuButtons.forEach(btn => {
-            btn.addEventListener('click', () => {
-                // Active state for menu
-                menuButtons.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-
-                // Section switch
-                const id = btn.getAttribute('data-section');
-                sections.forEach(sec => sec.classList.remove('active'));
-                const target = document.getElementById(id);
-                if (target) target.classList.add('active');
-
-                // Simple badge clear when viewing messages
-                if (id === 'messages' && badge) {
-                    badge.textContent = '0';
-                }
-            });
-        });
-    };
-
-    initDashboard();
+    // =================================================================
+    //  SECTION REMOVED - This logic is now handled in dashboard.html
+    // =================================================================
+    // The "Dashboard interactions" and "Account popup" sections were here.
+    // They have been removed to prevent conflicts with the script inside
+    // dashboard.html which correctly uses Firebase for authentication state.
+    // =================================================================
 
     // Add Tool button feedback
     const addToolBtn = document.getElementById('addTool');
