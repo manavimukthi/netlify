@@ -4,11 +4,113 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Ceyliz</title>
+    <script>
+      (function () {
+        try {
+          var stored = localStorage.getItem("theme");
+          var prefersDark =
+            window.matchMedia &&
+            window.matchMedia("(prefers-color-scheme: dark)").matches;
+          var theme = stored || (prefersDark ? "dark" : "light");
+          document.documentElement.setAttribute("data-theme", theme);
+        } catch (e) {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      })();
+    </script>
+    <style>
+      :root {
+        --bg: #ffffff;
+        --text: #0f172a;
+        --muted: #f1f5f9;
+        --border: #e2e8f0;
+        --surface: #ffffff;
+        --accent: #2563eb;
+      }
+      [data-theme="dark"] {
+        --bg: #0b1220;
+        --text: #e5edf5;
+        --muted: #0f172a;
+        --border: #1f2937;
+        --surface: #101826;
+        --accent: #7aa2ff;
+      }
+
+      body.dashboard-body {
+        background-color: var(--bg);
+        color: var(--text);
+      }
+      .topbar {
+        background: var(--surface);
+        border-bottom: 1px solid var(--border);
+      }
+      .top-link,
+      .sidebar-link {
+        color: var(--text);
+      }
+      .top-link.active {
+        color: var(--accent);
+      }
+      .dashboard-sidebar {
+        background: var(--surface);
+        border-right: 1px solid var(--border);
+      }
+      .dashboard-content {
+        background: var(--bg);
+      }
+      .dash-title {
+        color: var(--text);
+      }
+
+      .tool-block {
+        background: var(--surface);
+        color: var(--text);
+        border: 1px solid var(--border);
+      }
+      .tool-block.add-tool {
+        color: var(--accent);
+      }
+
+      /* Ensure strong visibility for tool cards in dark mode */
+      [data-theme="dark"] .tool-block {
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.04),
+          rgba(255, 255, 255, 0.02)
+        );
+        color: var(--text);
+        border-color: rgba(255, 255, 255, 0.1);
+        box-shadow: 0 18px 50px rgba(0, 0, 0, 0.55);
+      }
+      [data-theme="dark"] .tool-block.add-tool {
+        background: linear-gradient(
+          180deg,
+          rgba(122, 162, 255, 0.08),
+          rgba(122, 162, 255, 0.04)
+        );
+        border-color: rgba(122, 162, 255, 0.25);
+        color: var(--accent);
+      }
+
+      .account-popup {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        color: var(--text);
+      }
+      .page-loader {
+        background: var(--bg);
+      }
+      .logo-link .logo-img {
+        filter: var(--logo-filter, none);
+      }
+      [data-theme="dark"] .logo-link .logo-img {
+        filter: brightness(1.1) contrast(1.1);
+      }
+    </style>
     <link rel="stylesheet" href="style.css" />
     <link rel="icon" href="CEYLIZ favicon icon.svg" type="image/svg+xml" />
   </head>
   <body class="dashboard-body">
-    <!-- Page Loader -->
     <div
       id="pageLoader"
       class="page-loader"
@@ -26,34 +128,58 @@
         </object>
       </div>
     </div>
-    <!-- Topbar (Dashboard) -->
     <header class="topbar">
       <div class="topbar-inner">
         <div class="topbar-left">
           <a href="home.html" class="logo-link" aria-label="Home">
-            <img src="CEYLIZ logo.svg" alt="Logo" class="logo-img" />
+            <img src="CEYLIZ favicon icon.svg" alt="Logo" class="logo-img" />
           </a>
           <nav class="top-menu">
             <a href="dashboard.html" class="top-link active">Dashboard</a>
-            <a href="#" class="top-link">Marketplace</a>
             <a href="#" class="top-link">Learn</a>
-            <a href="#" class="top-link">Resources</a>
           </nav>
         </div>
         <div class="topbar-right">
           <button class="icon-btn" aria-label="Notifications">🔔</button>
-          <div class="avatar small">LA</div>
-          <button class="account-btn">Account ▾</button>
+          <button class="icon-btn" id="themeToggle" aria-label="Toggle theme">
+            🌗
+          </button>
+          <div class="avatar small"></div>
+          <button class="account-btn" id="accountBtn">Account ▾</button>
+          <div
+            class="account-popup"
+            id="accountPopup"
+            aria-hidden="true"
+            role="menu"
+            aria-label="Account menu"
+          >
+            <div class="acct-user" aria-live="polite">
+              <div class="acct-name" id="acctName"></div>
+              <div class="acct-email" id="acctEmail"></div>
+              <div class="acct-plan" id="acctPlan"></div>
+            </div>
+            <div class="acct-sep"></div>
+            <div class="acct-item" id="acctView" role="menuitem">
+              View Account
+            </div>
+            <div class="acct-item" id="acctSettings" role="menuitem">
+              Settings
+            </div>
+            <div class="acct-sep"></div>
+            <div class="acct-item" id="acctLogout" role="menuitem">Log out</div>
+            <div class="acct-item" id="acctProfile" role="menuitem">
+              Profile
+            </div>
+          </div>
         </div>
       </div>
     </header>
 
-    <!-- Dashboard Layout -->
     <main class="dashboard">
       <aside class="dashboard-sidebar">
         <div class="workspace">
           <span class="ws-icon">✦</span>
-          <span class="workspace-name">Lapeke's Workspace</span>
+          <span class="workspace-name"></span>
         </div>
         <ul class="sidebar-list">
           <li><a class="sidebar-link active" href="#">All sites</a></li>
@@ -71,7 +197,6 @@
       </aside>
 
       <section class="dashboard-content">
-        <!-- Tools Overview -->
         <div class="dash-section active" id="tools-home">
           <h2 class="dash-title">YOUR TOOLS</h2>
           <div class="tools-grid">
@@ -91,5 +216,159 @@
     </main>
 
     <script src="main.js"></script>
+    <script>
+      (function () {
+        var btn = document.getElementById("themeToggle");
+        function setTheme(theme) {
+          document.documentElement.setAttribute("data-theme", theme);
+          try {
+            localStorage.setItem("theme", theme);
+          } catch (e) {}
+          if (btn) {
+            btn.setAttribute(
+              "aria-pressed",
+              theme === "dark" ? "true" : "false"
+            );
+            btn.textContent = theme === "dark" ? "🌞" : "🌗";
+            btn.title =
+              theme === "dark" ? "Switch to light mode" : "Switch to dark mode";
+          }
+        }
+        var current =
+          document.documentElement.getAttribute("data-theme") || "light";
+        setTheme(current);
+        if (btn) {
+          btn.addEventListener("click", function () {
+            var next =
+              document.documentElement.getAttribute("data-theme") === "dark"
+                ? "light"
+                : "dark";
+            setTheme(next);
+          });
+        }
+      })();
+    </script>
+    <script>
+      // ===== THIS IS THE UPDATED SCRIPT BLOCK =====
+      (function () {
+        // --- 1. Get references to all UI elements that need updating ---
+        var accountBtn = document.getElementById("accountBtn");
+        var accountPopup = document.getElementById("accountPopup");
+        var nameEl = document.getElementById("acctName");
+        var emailEl = document.getElementById("acctEmail");
+        var planEl = document.getElementById("acctPlan");
+        var avatarEl = document.querySelector(".avatar.small");
+        var workspaceNameEl = document.querySelector(".workspace-name");
+
+        // --- 2. Retrieve and parse user data from localStorage ---
+        var user = null;
+        try {
+          // Get the string from storage
+          const storedUser = localStorage.getItem("currentUser");
+          if (storedUser) {
+            // Parse it back into an object
+            user = JSON.parse(storedUser);
+          }
+        } catch (e) {
+          console.error("Error parsing user data:", e);
+          // If data is corrupted, clear it
+          localStorage.removeItem("currentUser");
+        }
+
+        // --- 3. Check if user data exists. If not, redirect to login. ---
+        if (!user) {
+          console.log("No user data found. Redirecting to login page.");
+          // Replace '/login.html' with the actual URL of your login page
+          window.location.href = "/login.html";
+          return; // Stop the rest of the script from running
+        }
+
+        // --- 4. Populate the UI with user data ---
+        if (nameEl) nameEl.textContent = user.name;
+        if (emailEl) emailEl.textContent = user.email;
+        if (planEl) planEl.textContent = (user.plan || "FREE").toUpperCase();
+
+        if (workspaceNameEl) {
+          // Create a workspace name like "Lapeke's Workspace"
+          const firstName = user.name.split(" ")[0];
+          workspaceNameEl.textContent = `${firstName}'s Workspace`;
+        }
+
+        if (avatarEl) {
+          // Create initials for the avatar like "LA" from "Lapeke A."
+          const initials = user.name
+            .split(" ")
+            .map((n) => n[0])
+            .join("")
+            .toUpperCase();
+          avatarEl.textContent = initials;
+        }
+
+        // --- 5. Popup logic (mostly unchanged) ---
+        function openPopup() {
+          if (!accountPopup) return;
+          accountPopup.classList.add("visible");
+          accountPopup.setAttribute("aria-hidden", "false");
+          document.addEventListener("click", onDocClick, true);
+          document.addEventListener("keydown", onKeyDown, true);
+        }
+        function closePopup() {
+          if (!accountPopup) return;
+          accountPopup.classList.remove("visible");
+          accountPopup.setAttribute("aria-hidden", "true");
+          document.removeEventListener("click", onDocClick, true);
+          document.removeEventListener("keydown", onKeyDown, true);
+        }
+        function togglePopup() {
+          if (!accountPopup) return;
+          var isOpen = accountPopup.classList.contains("visible");
+          isOpen ? closePopup() : openPopup();
+        }
+        function onDocClick(e) {
+          if (!accountPopup.contains(e.target) && e.target !== accountBtn) {
+            closePopup();
+          }
+        }
+        function onKeyDown(e) {
+          if (e.key === "Escape") closePopup();
+        }
+        if (accountBtn) {
+          accountBtn.addEventListener("click", function (e) {
+            e.stopPropagation();
+            togglePopup();
+          });
+        }
+
+        // --- 6. Wire up actions, including an updated Logout ---
+        var acctLogout = document.getElementById("acctLogout");
+        if (acctLogout) {
+          acctLogout.addEventListener("click", function () {
+            // When logging out, clear the user data from storage
+            localStorage.removeItem("currentUser");
+            // Redirect to the login page
+            window.location.href = "/login.html";
+            closePopup();
+          });
+        }
+
+        // Other actions
+        var acctProfile = document.getElementById("acctProfile");
+        var acctView = document.getElementById("acctView");
+        var acctSettings = document.getElementById("acctSettings");
+
+        if (acctProfile)
+          acctProfile.addEventListener("click", function () {
+            closePopup();
+          });
+        if (acctView)
+          acctView.addEventListener("click", function () {
+            closePopup();
+          });
+        if (acctSettings)
+          acctSettings.addEventListener("click", function () {
+            closePopup();
+          });
+      })();
+    </script>
   </body>
 </html>
