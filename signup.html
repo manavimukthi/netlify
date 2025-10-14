@@ -97,19 +97,23 @@
         if (left) left.classList.add("loaded");
       });
     </script>
+
     <script type="module">
-      import { auth } from "./firebase-init.js";
+      import { auth, db } from "./firebase-init.js";
       import {
         createUserWithEmailAndPassword,
         sendEmailVerification,
       } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
+      import {
+        doc,
+        setDoc,
+      } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 
       const form = document.querySelector(".auth-form");
       if (form) {
         form.addEventListener("submit", async (e) => {
           e.preventDefault();
 
-          // Verify reCAPTCHA response before proceeding
           const captchaResponse = window.grecaptcha
             ? window.grecaptcha.getResponse()
             : null;
@@ -123,19 +127,17 @@
           const username = document.getElementById("username").value.trim();
           const businessType = document.getElementById("businessType").value;
 
-          if (!email || !password) {
-            alert("Please provide email and password.");
+          if (!email || !password || !username) {
+            alert("Please provide name, email, and password.");
             return;
           }
 
           const submitBtn = form.querySelector('button[type="submit"]');
-          const originalText = submitBtn ? submitBtn.textContent : "";
-          if (submitBtn) {
-            submitBtn.disabled = true;
-            submitBtn.textContent = "Creating...";
-          }
+          submitBtn.disabled = true;
+          submitBtn.textContent = "Creating...";
 
           try {
+            // Step 1: Create the user in Firebase Auth
             const userCred = await createUserWithEmailAndPassword(
               auth,
               email,
@@ -143,40 +145,38 @@
             );
             const user = userCred.user;
 
-            // Define the URL for our action handler page
-            // ✅ IMPORTANT: WHEN YOU GO LIVE, CHANGE THIS TO YOUR WEBSITE'S URL
-            // For example: "https://www.ceyliz.com/action-handler.html"
-            const actionCodeSettings = {
-              url: "https://www.ceyliz.dev/action-handler.html",
+            // Step 2: ✅ Create the user profile object to save
+            const userProfile = {
+              name: username,
+              email: email,
+              businessType: businessType,
+              plan: "FREE", // Assign a default plan
+              createdAt: new Date().toISOString(),
             };
 
-            // Send the special verification email with the custom URL
+            // Step 3: ✅ Save the profile to Firestore
+            await setDoc(doc(db, "users", user.uid), userProfile);
+
+            // Step 4: Send the verification email
+            const actionCodeSettings = {
+              url: "https://www.ceyliz.dev/login.html", // Redirect to login after verification
+            };
             await sendEmailVerification(user, actionCodeSettings);
 
-            // Temporarily save the username and business type to pass to the next page
-            localStorage.setItem("usernameForN8n", username);
-            localStorage.setItem("businessTypeForN8n", businessType);
-
-            // Redirect to the "please verify" page
+            // Step 5: Redirect to the "please verify" page
             window.location.href = "verify-email.html";
           } catch (err) {
             console.error("Signup error", err);
             alert(err.message || "Failed to create account");
-            // Reset reCAPTCHA so the user can retry
             if (
               window.grecaptcha &&
               typeof window.grecaptcha.reset === "function"
             ) {
-              try {
-                window.grecaptcha.reset();
-              } catch (e) {
-                /* ignore */
-              }
+              window.grecaptcha.reset();
             }
-            if (submitBtn) {
-              submitBtn.disabled = false;
-              submitBtn.textContent = "Create an account";
-            }
+          } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Create an account";
           }
         });
       }
