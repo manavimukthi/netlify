@@ -248,127 +248,164 @@
         }
       })();
     </script>
-    <script>
-      // ===== THIS IS THE UPDATED SCRIPT BLOCK =====
-      (function () {
-        // --- 1. Get references to all UI elements that need updating ---
-        var accountBtn = document.getElementById("accountBtn");
-        var accountPopup = document.getElementById("accountPopup");
-        var nameEl = document.getElementById("acctName");
-        var emailEl = document.getElementById("acctEmail");
-        var planEl = document.getElementById("acctPlan");
-        var avatarEl = document.querySelector(".avatar.small");
-        var workspaceNameEl = document.querySelector(".workspace-name");
+    <script type="module">
+      import { auth, db } from "./firebase-init.js";
+      import {
+        onAuthStateChanged,
+        signOut,
+      } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
+      import {
+        doc,
+        getDoc,
+      } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 
-        // --- 2. Retrieve and parse user data from localStorage ---
-        var user = null;
+      // Get references to UI
+      const accountBtn = document.getElementById("accountBtn");
+      const accountPopup = document.getElementById("accountPopup");
+      const nameEl = document.getElementById("acctName");
+      const emailEl = document.getElementById("acctEmail");
+      const planEl = document.getElementById("acctPlan");
+      const avatarEl = document.querySelector(".avatar.small");
+      const workspaceNameEl = document.querySelector(".workspace-name");
+
+      // Popup helpers
+      function openPopup() {
+        if (!accountPopup) return;
+        accountPopup.classList.add("visible");
+        accountPopup.setAttribute("aria-hidden", "false");
+        document.addEventListener("click", onDocClick, true);
+        document.addEventListener("keydown", onKeyDown, true);
+      }
+      function closePopup() {
+        if (!accountPopup) return;
+        accountPopup.classList.remove("visible");
+        accountPopup.setAttribute("aria-hidden", "true");
+        document.removeEventListener("click", onDocClick, true);
+        document.removeEventListener("keydown", onKeyDown, true);
+      }
+      function togglePopup() {
+        if (!accountPopup) return;
+        const isOpen = accountPopup.classList.contains("visible");
+        isOpen ? closePopup() : openPopup();
+      }
+      function onDocClick(e) {
+        if (!accountPopup.contains(e.target) && e.target !== accountBtn) {
+          closePopup();
+        }
+      }
+      function onKeyDown(e) {
+        if (e.key === "Escape") closePopup();
+      }
+      if (accountBtn) {
+        accountBtn.addEventListener("click", function (e) {
+          e.stopPropagation();
+          togglePopup();
+        });
+      }
+
+      // Auth state listener -> populate UI from Firestore or fallback to localStorage
+      onAuthStateChanged(auth, async (user) => {
+        if (!user) {
+          // No logged-in user -> redirect to login
+          localStorage.removeItem("currentUser");
+          window.location.href = "login.html";
+          return;
+        }
+
+        // Try Firestore first
         try {
-          // Get the string from storage
-          const storedUser = localStorage.getItem("currentUser");
-          if (storedUser) {
-            // Parse it back into an object
-            user = JSON.parse(storedUser);
+          const userDoc = await getDoc(doc(db, "users", user.uid));
+          if (userDoc.exists()) {
+            const data = userDoc.data();
+            const profile = {
+              uid: user.uid,
+              name: data.name || user.displayName || "",
+              email: data.email || user.email || "",
+              plan: data.plan || "FREE",
+              businessType: data.businessType || "",
+            };
+            // persist locally
+            try {
+              localStorage.setItem("currentUser", JSON.stringify(profile));
+            } catch (e) {
+              console.warn(e);
+            }
+            populateUI(profile);
+            return;
           }
         } catch (e) {
-          console.error("Error parsing user data:", e);
-          // If data is corrupted, clear it
-          localStorage.removeItem("currentUser");
+          console.warn("Error reading profile from Firestore", e);
         }
 
-        // --- 3. Check if user data exists. If not, redirect to login. ---
-        if (!user) {
-          console.log("No user data found. Redirecting to login page.");
-          // Replace '/login.html' with the actual URL of your login page
-          window.location.href = "/login.html";
-          return; // Stop the rest of the script from running
+        // Fallback to localStorage
+        try {
+          const stored = localStorage.getItem("currentUser");
+          if (stored) {
+            const profile = JSON.parse(stored);
+            populateUI(profile);
+            return;
+          }
+        } catch (e) {
+          console.warn("Failed to parse currentUser from localStorage", e);
         }
 
-        // --- 4. Populate the UI with user data ---
-        if (nameEl) nameEl.textContent = user.name;
-        if (emailEl) emailEl.textContent = user.email;
+        // Final fallback: basic info from auth
+        const basic = {
+          uid: user.uid,
+          name: user.displayName || "",
+          email: user.email || "",
+          plan: "FREE",
+        };
+        populateUI(basic);
+      });
+
+      function populateUI(user) {
+        if (nameEl) nameEl.textContent = user.name || "";
+        if (emailEl) emailEl.textContent = user.email || "";
         if (planEl) planEl.textContent = (user.plan || "FREE").toUpperCase();
-
         if (workspaceNameEl) {
-          // Create a workspace name like "Lapeke's Workspace"
-          const firstName = user.name.split(" ")[0];
+          const firstName = (user.name || "").split(" ")[0] || "My";
           workspaceNameEl.textContent = `${firstName}'s Workspace`;
         }
-
         if (avatarEl) {
-          // Create initials for the avatar like "LA" from "Lapeke A."
-          const initials = user.name
+          const initials = (user.name || "")
             .split(" ")
+            .filter(Boolean)
             .map((n) => n[0])
             .join("")
+            .slice(0, 2)
             .toUpperCase();
-          avatarEl.textContent = initials;
+          avatarEl.textContent = initials || "U";
         }
+      }
 
-        // --- 5. Popup logic (mostly unchanged) ---
-        function openPopup() {
-          if (!accountPopup) return;
-          accountPopup.classList.add("visible");
-          accountPopup.setAttribute("aria-hidden", "false");
-          document.addEventListener("click", onDocClick, true);
-          document.addEventListener("keydown", onKeyDown, true);
-        }
-        function closePopup() {
-          if (!accountPopup) return;
-          accountPopup.classList.remove("visible");
-          accountPopup.setAttribute("aria-hidden", "true");
-          document.removeEventListener("click", onDocClick, true);
-          document.removeEventListener("keydown", onKeyDown, true);
-        }
-        function togglePopup() {
-          if (!accountPopup) return;
-          var isOpen = accountPopup.classList.contains("visible");
-          isOpen ? closePopup() : openPopup();
-        }
-        function onDocClick(e) {
-          if (!accountPopup.contains(e.target) && e.target !== accountBtn) {
-            closePopup();
+      // Logout wiring using Firebase
+      const acctLogout = document.getElementById("acctLogout");
+      if (acctLogout) {
+        acctLogout.addEventListener("click", async (e) => {
+          e.stopPropagation();
+          try {
+            await signOut(auth);
+          } catch (err) {
+            console.warn("Sign out failed", err);
           }
-        }
-        function onKeyDown(e) {
-          if (e.key === "Escape") closePopup();
-        }
-        if (accountBtn) {
-          accountBtn.addEventListener("click", function (e) {
-            e.stopPropagation();
-            togglePopup();
-          });
-        }
-
-        // --- 6. Wire up actions, including an updated Logout ---
-        var acctLogout = document.getElementById("acctLogout");
-        if (acctLogout) {
-          acctLogout.addEventListener("click", function () {
-            // When logging out, clear the user data from storage
+          try {
             localStorage.removeItem("currentUser");
-            // Redirect to the login page
-            window.location.href = "/login.html";
-            closePopup();
-          });
-        }
+          } catch (e) {}
+          closePopup();
+          window.location.href = "login.html";
+        });
+      }
 
-        // Other actions
-        var acctProfile = document.getElementById("acctProfile");
-        var acctView = document.getElementById("acctView");
-        var acctSettings = document.getElementById("acctSettings");
-
-        if (acctProfile)
-          acctProfile.addEventListener("click", function () {
-            closePopup();
-          });
-        if (acctView)
-          acctView.addEventListener("click", function () {
-            closePopup();
-          });
-        if (acctSettings)
-          acctSettings.addEventListener("click", function () {
-            closePopup();
-          });
-      })();
+      // Other small popup actions
+      const acctProfile = document.getElementById("acctProfile");
+      const acctView = document.getElementById("acctView");
+      const acctSettings = document.getElementById("acctSettings");
+      if (acctProfile)
+        acctProfile.addEventListener("click", () => closePopup());
+      if (acctView) acctView.addEventListener("click", () => closePopup());
+      if (acctSettings)
+        acctSettings.addEventListener("click", () => closePopup());
     </script>
   </body>
 </html>
