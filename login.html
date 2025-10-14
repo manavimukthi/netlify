@@ -81,8 +81,12 @@
       });
     </script>
     <script type="module">
-      import { auth } from "./firebase-init.js";
+      import { auth, db } from "./firebase-init.js";
       import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
+      import {
+        doc,
+        getDoc,
+      } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 
       const form = document.querySelector(".auth-form");
       if (form) {
@@ -123,16 +127,50 @@
             const user = userCred.user;
 
             // Step 2: ✅ CHECK IF THE USER'S EMAIL IS VERIFIED
-            if (user.emailVerified) {
-              // If verified, proceed to the dashboard
-              window.location.href = "dashboard.html";
-            } else {
-              // If not verified, show an alert and sign them out
+            if (!user.emailVerified) {
               alert(
                 "Please verify your email address before logging in. Check your inbox for the verification link."
               );
-              auth.signOut();
+              await auth.signOut();
+              return;
             }
+
+            // Step 3: Try to load the user's profile from Firestore and cache it
+            try {
+              const userDoc = await getDoc(doc(db, "users", user.uid));
+              if (userDoc.exists()) {
+                const data = userDoc.data();
+                try {
+                  localStorage.setItem(
+                    "currentUser",
+                    JSON.stringify({ ...data, uid: user.uid })
+                  );
+                } catch (e) {
+                  console.warn(
+                    "Could not persist currentUser to localStorage",
+                    e
+                  );
+                }
+              } else {
+                // Firestore doc missing - store a minimal fallback
+                const fallback = {
+                  uid: user.uid,
+                  name: user.displayName || "",
+                  email: user.email || email,
+                  plan: "FREE",
+                };
+                try {
+                  localStorage.setItem("currentUser", JSON.stringify(fallback));
+                } catch (e) {
+                  console.warn("Could not persist fallback currentUser", e);
+                }
+              }
+            } catch (err) {
+              console.warn("Failed to read user profile from Firestore", err);
+            }
+
+            // If we've reached here, redirect to the dashboard
+            window.location.href = "dashboard.html";
           } catch (err) {
             console.error("Login error", err);
             alert(err.message || "Failed to sign in");
