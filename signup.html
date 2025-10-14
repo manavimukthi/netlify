@@ -20,11 +20,7 @@
             <h2>Create an account</h2>
             <p class="small">
               Already have an account?
-              <a
-                href="login.html"
-                style="color: rgba(255, 255, 255, 0.95); font-weight: 700"
-                >Log in</a
-              >
+              <a href="login.html" style="color: rgba(255, 255, 255, 0.95); font-weight: 700">Log in</a>
             </p>
             <p>
               Sign up to start automating tasks and growing your business. It
@@ -72,10 +68,7 @@
                   Create an account
                 </button>
               </div>
-              <div
-                class="g-recaptcha"
-                data-sitekey="6Ld8luYrAAAAALwElBcJZx7jM5ri6Syhxa8Pfenx"
-              ></div>
+              <div class="g-recaptcha" data-sitekey="6Ld8luYrAAAAALwElBcJZx7jM5ri6Syhxa8Pfenx"></div>
               <div class="policy-note">
                 By creating an account, you agree to our
                 <a href="privacy.html">Privacy Policy</a> and
@@ -91,13 +84,11 @@
     </div>
 
     <script>
-      // Add class after DOM ready to enable smooth background fade
       document.addEventListener("DOMContentLoaded", function () {
         var left = document.querySelector(".auth-left");
         if (left) left.classList.add("loaded");
       });
     </script>
-
     <script type="module">
       import { auth, db } from "./firebase-init.js";
       import {
@@ -113,67 +104,35 @@
       if (form) {
         form.addEventListener("submit", async (e) => {
           e.preventDefault();
-
-          const captchaResponse = window.grecaptcha
-            ? window.grecaptcha.getResponse()
-            : null;
-          if (!captchaResponse) {
-            alert("Please complete the reCAPTCHA challenge before continuing.");
-            return;
-          }
-
           const email = document.getElementById("email").value.trim();
           const password = document.getElementById("password").value;
           const username = document.getElementById("username").value.trim();
           const businessType = document.getElementById("businessType").value;
-
-          if (!email || !password || !username) {
-            alert("Please provide name, email, and password.");
-            return;
-          }
-
           const submitBtn = form.querySelector('button[type="submit"]');
           submitBtn.disabled = true;
           submitBtn.textContent = "Creating...";
 
           try {
-            // Step 1: Create the user in Firebase Auth
-            const userCred = await createUserWithEmailAndPassword(
-              auth,
-              email,
-              password
-            );
+            const userCred = await createUserWithEmailAndPassword(auth, email, password);
             const user = userCred.user;
-
-            // Step 2: ✅ Create the user profile object to save
             const userProfile = {
               name: username,
               email: email,
               businessType: businessType,
-              plan: "FREE", // Assign a default plan
+              plan: "FREE",
               createdAt: new Date().toISOString(),
             };
-
-            // Step 3: ✅ Save the profile to Firestore
             await setDoc(doc(db, "users", user.uid), userProfile);
 
-            // Step 4: Send the verification email
+            // IMPORTANT: This URL must be updated after you host your site.
             const actionCodeSettings = {
-              url: "https://www.ceyliz.dev/login.html", // Redirect to login after verification
+              url: "https://www.ceyliz.dev/action-handler.html",
             };
             await sendEmailVerification(user, actionCodeSettings);
-
-            // Step 5: Redirect to the "please verify" page
             window.location.href = "verify-email.html";
           } catch (err) {
             console.error("Signup error", err);
             alert(err.message || "Failed to create account");
-            if (
-              window.grecaptcha &&
-              typeof window.grecaptcha.reset === "function"
-            ) {
-              window.grecaptcha.reset();
-            }
           } finally {
             submitBtn.disabled = false;
             submitBtn.textContent = "Create an account";
