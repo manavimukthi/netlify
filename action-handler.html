@@ -1,60 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Verifying Account - CEYLIZ</title>
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
-    <div class="auth-page">
-      <div class="auth-card">
-        <h1>Verifying your account...</h1>
-        <p>Please wait, we're getting things ready for you.</p>
-      </div>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verifying Your Account - Ceyliz</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="CEYLIZ favicon icon.svg" type="image/svg+xml">
+</head>
+<body>
+    <div class="verify-container">
+        <div class="verify-card">
+            <h1>Verifying your account...</h1>
+            <p>Please wait a moment while we confirm your email address.</p>
+            <p id="statusMessage" style="font-weight: bold; margin-top: 15px;"></p>
+        </div>
     </div>
 
     <script type="module">
-      import { auth } from "./firebase-init.js";
-      import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
+        import { auth, db } from "./firebase-init.js";
+        import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
+        import { doc, getDoc } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 
-      onAuthStateChanged(auth, async (user) => {
-        // Check if Firebase has automatically signed the user in and they are verified
-        if (user && user.emailVerified) {
-          console.log("User is verified!", user.uid);
+        // IMPORTANT: Paste your n8n Production Webhook URL here.
+        const N8N_WEBHOOK_URL = "YOUR_N8N_WEBHOOK_URL_HERE"; 
 
-          // Get the saved username and business type from browser storage
-          const username = localStorage.getItem("usernameForN8n");
-          const businessType = localStorage.getItem("businessTypeForN8n");
+        const statusMessageEl = document.getElementById('statusMessage');
 
-          // Trigger your n8n webhook with all the data
-          const n8nWebhookUrl =
-            "https://kimn8nceyliz.app.n8n.cloud/webhook/form";
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                statusMessageEl.textContent = "Could not find a user session. The link may be invalid.";
+                return;
+            }
+            await user.reload();
+            const freshUser = auth.currentUser;
 
-          await fetch(n8nWebhookUrl, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              uid: user.uid,
-              email: user.email,
-              username: username || null,
-              businessType: businessType || null,
-              isVerified: true, // You can add a flag to confirm verification
-            }),
-          });
-
-          // Clean up the temporary storage
-          localStorage.removeItem("usernameForN8n");
-          localStorage.removeItem("businessTypeForN8n");
-
-          // Send the user to their new dashboard
-          window.location.href = "dashboard.html";
-        } else {
-          // If something went wrong or the user is not verified, they will stay on this page.
-          console.log("User is not signed in or not verified yet.");
-        }
-      });
+            if (freshUser && freshUser.emailVerified) {
+                statusMessageEl.textContent = "✅ Email verified! Sending data...";
+                try {
+                    const userDoc = await getDoc(doc(db, "users", freshUser.uid));
+                    if (!userDoc.exists()) throw new Error("User profile not found in database.");
+                    const userProfile = userDoc.data();
+                    const response = await fetch(N8N_WEBHOOK_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(userProfile),
+                    });
+                    if (!response.ok) throw new Error("Webhook call failed.");
+                    statusMessageEl.textContent = "🚀 Success! Redirecting you to log in...";
+                } catch (error) {
+                    console.error("Error processing user data:", error);
+                    statusMessageEl.textContent = `❌ An error occurred: ${error.message}`;
+                } finally {
+                    await signOut(auth);
+                    setTimeout(() => {
+                        window.location.href = "login.html?verified=true";
+                    }, 2000); 
+                }
+            } else {
+                statusMessageEl.textContent = "❌ Email not yet verified. Please try clicking the link again.";
+            }
+        });
     </script>
-  </body>
+</body>
 </html>
