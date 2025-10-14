@@ -20,7 +20,11 @@
             <h2>Welcome Back</h2>
             <p class="small">
               Don't have an account?
-              <a href="signup.html" style="color: rgba(255, 255, 255, 0.95); font-weight: 700">Sign up</a>
+              <a
+                href="signup.html"
+                style="color: rgba(255, 255, 255, 0.95); font-weight: 700"
+                >Sign up</a
+              >
             </p>
             <p>
               Welcome to CEYLIZ — build automations, save time, and grow your
@@ -28,11 +32,12 @@
             </p>
           </div>
         </div>
+
         <div class="auth-right">
           <div class="auth-card">
             <h1>Log in</h1>
             <p class="auth-sub">Sign in to your account</p>
-            
+
             <div id="verificationMessage" style="display: none; background: #d4edda; color: #155724; padding: 12px; border-radius: 8px; margin-bottom: 15px; font-weight: bold; text-align: center;"></div>
 
             <form class="auth-form" action="#" method="post">
@@ -40,21 +45,29 @@
                 <label for="email">Email address</label>
                 <input id="email" name="email" type="email" required />
               </div>
+
               <div>
                 <label for="password">Password</label>
                 <input id="password" name="password" type="password" required />
               </div>
-              <div class="g-recaptcha" data-sitekey="6Ld8luYrAAAAALwElBcJZx7jM5ri6Syhxa8Pfenx"></div>
+
+              <div
+                class="g-recaptcha"
+                data-sitekey="6Ld8luYrAAAAALwElBcJZx7jM5ri6Syhxa8Pfenx"
+              ></div>
+
               <div class="auth-cta">
                 <button type="submit" class="btn-primary">Log in</button>
                 <a href="#" class="btn-ghost">Forgot?</a>
               </div>
+
               <p class="policy-note">
                 By continuing you agree to our
                 <a href="privacy.html">Privacy Policy</a> and
                 <a href="#">Terms</a>.
               </p>
             </form>
+
             <div class="auth-footer-links">
               <p>Don't have an account? <a href="signup.html">Create one</a></p>
             </div>
@@ -62,18 +75,65 @@
         </div>
       </div>
     </div>
-    
     <script>
+      // Add class after DOM ready to enable smooth background fade (match signup behavior)
       document.addEventListener("DOMContentLoaded", function () {
         var left = document.querySelector(".auth-left");
         if (left) left.classList.add("loaded");
       });
     </script>
-    <script type="module" src="login-script.js">
-      // NOTE: The main login logic is now in login-script.js
+    <script type="module">
+      import { auth, db } from "./firebase-init.js";
+      import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
+      import {
+        doc,
+        getDoc,
+      } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+
+      const form = document.querySelector(".auth-form");
+      if (form) {
+        form.addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          const email = document.getElementById("email").value.trim();
+          const password = document.getElementById("password").value;
+          const submitBtn = form.querySelector('button[type="submit"]');
+          submitBtn.disabled = true;
+          submitBtn.textContent = "Signing in...";
+
+          try {
+            const userCred = await signInWithEmailAndPassword(auth, email, password);
+            const user = userCred.user;
+
+            if (!user.emailVerified) {
+              alert("Please verify your email address before logging in. Check your inbox for the verification link.");
+              await auth.signOut();
+              submitBtn.disabled = false;
+              submitBtn.textContent = "Log in";
+              return;
+            }
+
+            const userDoc = await getDoc(doc(db, "users", user.uid));
+            if (userDoc.exists()) {
+              const data = userDoc.data();
+              localStorage.setItem("currentUser", JSON.stringify({ ...data, uid: user.uid }));
+            }
+
+            // --- THIS IS THE FIX ---
+            // Redirect to a clean URL using replace()
+            window.location.replace("/dashboard.html");
+            // ---------------------
+
+          } catch (err) {
+            console.error("Login error", err);
+            alert(err.message || "Failed to sign in");
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Log in";
+          }
+        });
+      }
     </script>
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-    
     <script>
       document.addEventListener("DOMContentLoaded", function () {
         const params = new URLSearchParams(window.location.search);
