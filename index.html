@@ -9,11 +9,7 @@
     <title>Ceyliz</title>
     <link rel="stylesheet" href="style.css" />
     <link rel="icon" href="CEYLIZ favicon icon.svg" type="image/svg+xml" />
-    <!-- n8n Chat Widget -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/@n8n/chat/dist/style.css"
-      rel="stylesheet"
-    />
+
     <!-- Preload model-viewer script -->
     <link
       rel="preload"
@@ -429,66 +425,5 @@
     </footer>
 
     <script src="main.js"></script>
-
-    <!-- n8n Chat Widget with resilient fallback -->
-    <script type="module">
-      const CHAT_WEBHOOK = "https://kimn8nceyliz.app.n8n.cloud/webhook/6940e80d-e56f-46bd-8809-c9c268e17dbf/chat";
-      const CHAT_CDN = "https://cdn.jsdelivr.net/npm/@n8n/chat/dist/chat.bundle.es.js";
-
-      const withTimeout = (promise, ms, err = new Error("timeout")) => {
-        let t;
-        const timer = new Promise((_, reject) => {
-          t = setTimeout(() => reject(err), ms);
-        });
-        return Promise.race([promise.finally(() => clearTimeout(t)), timer]);
-      };
-
-      const checkChatHostReachable = async () => {
-        try {
-          const controller = new AbortController();
-          const abortId = setTimeout(() => controller.abort(), 2500);
-          // Use no-cors so it doesn't error due to CORS; success here just means network reachable
-          await fetch(CHAT_WEBHOOK, { method: "HEAD", mode: "no-cors", signal: controller.signal });
-          clearTimeout(abortId);
-          return true;
-        } catch (_) {
-          return false;
-        }
-      };
-
-      const showChatOfflineBadge = () => {
-        const badge = document.createElement("button");
-        badge.type = "button";
-        badge.textContent = "Chat offline";
-        badge.setAttribute("aria-live", "polite");
-        badge.style.cssText = "position:fixed;bottom:20px;right:20px;background:#9aa0a6;color:#fff;border:none;border-radius:24px;padding:10px 14px;font-weight:600;box-shadow:0 6px 18px rgba(0,0,0,.2);cursor:not-allowed;z-index:9999";
-        badge.title = "Chat is currently unavailable. Please try again later.";
-        document.body.appendChild(badge);
-      };
-
-      (async () => {
-        try {
-          const [{ createChat }, reachable] = await Promise.all([
-            withTimeout(import(CHAT_CDN), 4000).catch(() => ({ createChat: null })),
-            checkChatHostReachable(),
-          ]);
-
-          if (!createChat || !reachable) {
-            showChatOfflineBadge();
-            return;
-          }
-
-          createChat({
-            webhookUrl: CHAT_WEBHOOK,
-            title: "Ceyli",
-            initialMessages: [
-              "Hi there! 👋\n\nMy name is Ceyli. How can I assist you today?",
-            ],
-          });
-        } catch (_) {
-          showChatOfflineBadge();
-        }
-      })();
-    </script>
   </body>
 </html>
