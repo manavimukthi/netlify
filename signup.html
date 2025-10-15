@@ -124,12 +124,16 @@
             };
             await setDoc(doc(db, "users", user.uid), userProfile);
 
-            // IMPORTANT: This URL must be updated after you host your site.
+            // --- THIS IS THE FINAL AND MOST IMPORTANT FIX ---
             const actionCodeSettings = {
-              url: "https://www.ceyliz.dev/action-handler.html",
+              // This dynamically creates the URL to match the current domain (www or non-www).
+              url: `${window.location.origin}/action-handler.html`,
             };
+            // ---------------------------------------------
+            
             await sendEmailVerification(user, actionCodeSettings);
             window.location.href = "verify-email.html";
+
           } catch (err) {
             console.error("Signup error", err);
             alert(err.message || "Failed to create account");
