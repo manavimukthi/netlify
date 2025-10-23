@@ -400,6 +400,137 @@ body {
     padding-right: 40px;
 }
 
+/* Learn-more / About page specific styles */
+.about-page {
+  padding: 110px 20px 80px; /* leaves room for fixed header */
+  background: linear-gradient(180deg, #fbfdff 0%, #ffffff 100%);
+}
+
+.about-page .container {
+  max-width: 980px;
+  margin: 0 auto;
+  background: linear-gradient(180deg, #ffffff, #fbfcff);
+  border: 1px solid rgba(15, 23, 42, 0.04);
+  border-radius: 16px;
+  padding: 44px;
+  box-shadow: 0 18px 40px rgba(11, 22, 40, 0.06);
+}
+
+.about-page h1 {
+  font-size: 36px;
+  color: #0b2540;
+  margin-bottom: 18px;
+  letter-spacing: 0.2px;
+}
+
+.about-page h2 {
+  font-size: 20px;
+  color: #102040;
+  margin-top: 22px;
+  margin-bottom: 10px;
+}
+
+.about-page h3 { color: #0b2540; margin-top: 18px; margin-bottom: 8px; }
+
+/* Center main topic headings, but keep split-content headings left aligned */
+.about-page > .container > h1,
+.about-page > .container > .split-grid > .split-content > h2,
+.about-page > .container > .split-grid.reverse > .split-content > h2 {
+  text-align: center;
+}
+
+.split-content > h2,
+.split-content > h3 { text-align: left; }
+
+.about-page p {
+  color: #334155;
+  font-size: 16px;
+  line-height: 1.8;
+  margin-bottom: 14px;
+}
+
+.about-page ul,
+.about-page ol {
+  color: #334155;
+  margin: 10px 0 18px 20px;
+}
+
+.about-page li { margin-bottom: 8px; }
+
+.about-page hr { border: none; height: 1px; background: linear-gradient(90deg, rgba(11,22,40,0.06), rgba(11,22,40,0.02)); margin: 26px 0; }
+
+.about-page .section-btn {
+  display: inline-block;
+  text-decoration: none;
+  background: linear-gradient(90deg, #0b79ff, #0066cc);
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: 10px;
+  box-shadow: 0 8px 30px rgba(11, 23, 64, 0.12);
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+.about-page .section-btn:hover { transform: translateY(-3px); box-shadow: 0 14px 44px rgba(11, 23, 64, 0.16); }
+
+/* Ensure anchor-buttons across the site have no underline */
+.section-btn, .tool-actions .tool-btn.ghost, a.contact-btn { text-decoration: none; }
+/* Force remove underlines for anchor-like buttons in all states */
+.section-btn, .section-btn:link, .section-btn:visited, .section-btn:hover, .section-btn:active, .section-btn:focus,
+.tool-actions .tool-btn.ghost, .tool-actions .tool-btn.ghost:link, .tool-actions .tool-btn.ghost:visited,
+.tool-actions .tool-btn.ghost:hover, .tool-actions .tool-btn.ghost:active {
+  text-decoration: none !important;
+}
+
+/* Narrow screens */
+@media (max-width: 900px) {
+  .about-page .container { padding: 28px; border-radius: 12px; }
+  .about-page h1 { font-size: 30px; }
+  .about-page h2 { font-size: 18px; }
+}
+
+@media (max-width: 520px) {
+  .about-page { padding-top: 90px; }
+  .about-page .container { padding: 20px; }
+  .about-page p { font-size: 15px; }
+}
+
+/* Mobile adjustments: increase header space and about top spacing */
+@media (max-width: 520px) {
+  .header { padding: 18px 0; }
+  /* push learn-more content lower so header doesn't overlap and gives breathing room */
+  .header { padding: 22px 0; }
+  .about-page { padding-top: 150px; }
+  .about-page h1 { margin-top: 12px; }
+}
+
+/* Split grid for images + content */
+.split-grid {
+  display: grid;
+  grid-template-columns: 1fr 460px;
+  gap: 30px;
+  align-items: center;
+  margin-bottom: 18px;
+}
+.split-grid.reverse { grid-template-columns: 460px 1fr; }
+.split-image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.split-image img {
+  width: 100%;
+  max-width: 440px;
+  border-radius: 14px;
+  box-shadow: 0 16px 40px rgba(11, 23, 64, 0.08);
+  object-fit: cover;
+}
+.split-content { min-width: 320px; }
+
+@media (max-width: 980px) {
+  .split-grid { grid-template-columns: 1fr; }
+  .split-grid.reverse { grid-template-columns: 1fr; }
+  .split-image img { max-width: 100%; margin-bottom: 12px; }
+}
+
 .section-label {
     display: block;
     font-size: 12px;
